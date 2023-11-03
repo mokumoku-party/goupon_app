@@ -1,4 +1,4 @@
-import 'package:app/pages/home_page.dart';
+import 'package:app/pages/home/home_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

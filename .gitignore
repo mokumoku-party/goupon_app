@@ -1,6 +1,9 @@
 # ref: https://github.com/wasabeef/flutter-architecture-blueprints/blob/main/.gitignore
 # See https://www.dartlang.org/guides/libraries/private-files
 
+# Supabase
+api_key.json
+
 # Miscellaneous
 *.class
 *.log

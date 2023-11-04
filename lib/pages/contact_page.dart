@@ -41,8 +41,11 @@ final cameraControllerProvider =
 
 final dio = Dio();
 final _isLoadingProvider = StateProvider((ref) => false);
+final _progressProvider = StateProvider((ref) => -1);
 final _retryEventProvider = StateProvider((ref) => false);
+
 final _successEventProvider = StateProvider((ref) => false);
+final _totalProvider = StateProvider((ref) => -1);
 
 class ContactPage extends HookConsumerWidget {
   const ContactPage({super.key});
@@ -131,8 +134,9 @@ class ContactPage extends HookConsumerWidget {
                         },
                         contentType: 'multipart/form-data',
                       ),
-                      onSendProgress: (count, total) =>
-                          print('s: $count /  $total'),
+                      onSendProgress: (count, total) {
+                        print('s: $count /  $total');
+                      },
                       onReceiveProgress: (count, total) =>
                           print('r: $count / $total'),
                     );
@@ -183,7 +187,8 @@ class _LoadingIndicator extends HookConsumerWidget {
       opacity: isLoading ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 50),
       child: const CircularProgressIndicator(
-        color: primaryColor,
+        strokeWidth: 8,
+        color: Colors.white,
       ),
     );
   }
@@ -241,6 +246,7 @@ class _SuccessDialog extends HookConsumerWidget {
       if (!success) return () {};
 
       final timer = Timer(const Duration(milliseconds: 3000), () {
+        ref.read(_successEventProvider.notifier).update((state) => false);
         ref.read(appRouterProvider).go('/goupon');
       });
 
@@ -264,7 +270,7 @@ class _SuccessDialog extends HookConsumerWidget {
             children: [
               Text(
                 'ぐーぽんっ！',
-                style: TextStyle(fontSize: 60),
+                style: TextStyle(fontSize: 40),
               )
             ],
           ),

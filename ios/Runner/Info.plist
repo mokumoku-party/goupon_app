@@ -8,6 +8,10 @@
 	<dict>
    		<key>NSAllowsArbitraryLoads</key><true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>カメラを使用します</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>マイクを使用します</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

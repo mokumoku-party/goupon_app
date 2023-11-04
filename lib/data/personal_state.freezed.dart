@@ -23,6 +23,7 @@ mixin _$PersonalState {
   double get longitude => throw _privateConstructorUsedError;
   String? get nickname => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  List<int> get stickers => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $PersonalStateCopyWith<PersonalState> get copyWith =>
@@ -42,7 +43,8 @@ abstract class $PersonalStateCopyWith<$Res> {
       double latitude,
       double longitude,
       String? nickname,
-      String? description});
+      String? description,
+      List<int> stickers});
 }
 
 /// @nodoc
@@ -65,6 +67,7 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
     Object? longitude = null,
     Object? nickname = freezed,
     Object? description = freezed,
+    Object? stickers = null,
   }) {
     return _then(_value.copyWith(
       type: null == type
@@ -95,6 +98,10 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      stickers: null == stickers
+          ? _value.stickers
+          : stickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ) as $Val);
   }
 }
@@ -114,7 +121,8 @@ abstract class _$$PersonalStateImplCopyWith<$Res>
       double latitude,
       double longitude,
       String? nickname,
-      String? description});
+      String? description,
+      List<int> stickers});
 }
 
 /// @nodoc
@@ -135,6 +143,7 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
     Object? longitude = null,
     Object? nickname = freezed,
     Object? description = freezed,
+    Object? stickers = null,
   }) {
     return _then(_$PersonalStateImpl(
       type: null == type
@@ -165,6 +174,10 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      stickers: null == stickers
+          ? _value._stickers
+          : stickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ));
   }
 }
@@ -179,8 +192,10 @@ class _$PersonalStateImpl extends _PersonalState {
       this.latitude = 0.0,
       this.longitude = 0.0,
       this.nickname,
-      this.description})
-      : super._();
+      this.description,
+      final List<int> stickers = const []})
+      : _stickers = stickers,
+        super._();
 
   @override
   @JsonKey()
@@ -201,10 +216,18 @@ class _$PersonalStateImpl extends _PersonalState {
   final String? nickname;
   @override
   final String? description;
+  final List<int> _stickers;
+  @override
+  @JsonKey()
+  List<int> get stickers {
+    if (_stickers is EqualUnmodifiableListView) return _stickers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_stickers);
+  }
 
   @override
   String toString() {
-    return 'PersonalState(type: $type, name: $name, uuid: $uuid, latitude: $latitude, longitude: $longitude, nickname: $nickname, description: $description)';
+    return 'PersonalState(type: $type, name: $name, uuid: $uuid, latitude: $latitude, longitude: $longitude, nickname: $nickname, description: $description, stickers: $stickers)';
   }
 
   @override
@@ -222,12 +245,21 @@ class _$PersonalStateImpl extends _PersonalState {
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname) &&
             (identical(other.description, description) ||
-                other.description == description));
+                other.description == description) &&
+            const DeepCollectionEquality().equals(other._stickers, _stickers));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, type, name, uuid, latitude,
-      longitude, nickname, description);
+  int get hashCode => Object.hash(
+      runtimeType,
+      type,
+      name,
+      uuid,
+      latitude,
+      longitude,
+      nickname,
+      description,
+      const DeepCollectionEquality().hash(_stickers));
 
   @JsonKey(ignore: true)
   @override
@@ -244,7 +276,8 @@ abstract class _PersonalState extends PersonalState {
       final double latitude,
       final double longitude,
       final String? nickname,
-      final String? description}) = _$PersonalStateImpl;
+      final String? description,
+      final List<int> stickers}) = _$PersonalStateImpl;
   _PersonalState._() : super._();
 
   @override
@@ -261,6 +294,8 @@ abstract class _PersonalState extends PersonalState {
   String? get nickname;
   @override
   String? get description;
+  @override
+  List<int> get stickers;
   @override
   @JsonKey(ignore: true)
   _$$PersonalStateImplCopyWith<_$PersonalStateImpl> get copyWith =>

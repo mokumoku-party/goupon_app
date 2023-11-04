@@ -1,11 +1,22 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:app/app.dart';
+import 'package:app/models/personal_notifier.dart';
 import 'package:app/routes/app_router.dart';
 import 'package:dotlottie_loader/dotlottie_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final completeGoupon = StateProvider.autoDispose((ref) => false);
+
+final stickers =
+    StateProvider<List<(String name, String desc, String url)>>((ref) => []);
+
+var _gouponNumber = -1;
 
 class ResultPage extends HookConsumerWidget {
   const ResultPage({super.key});
@@ -16,6 +27,40 @@ class ResultPage extends HookConsumerWidget {
     final animation = ColorTween(begin: Colors.grey, end: Colors.white)
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(controller);
+
+    useEffect(() {
+      Future.microtask(() async {
+        final client = Supabase.instance.client;
+
+        final res = await client.from('sticker').select();
+        final data = List<Map<String, dynamic>>.from(res);
+
+        ref.read(stickers.notifier).state = data
+            .map((e) => (
+                  e['name'] as String,
+                  e['discription'] as String,
+                  e['sticker_img_url'] as String
+                ))
+            .toList();
+
+        _gouponNumber = Random().nextInt(data.length);
+
+        final uuid = ref.read(personalProvider).uuid;
+        final idRes = await client.from('users').select().match({'uuid': uuid});
+        final idData = List<Map<String, dynamic>>.from(idRes).first['stickers'];
+        final currentList =
+            const JsonDecoder().convert(idData ?? '[]') as List<dynamic>;
+        currentList.add(_gouponNumber.toString());
+
+        final nextList = const JsonEncoder().convert(currentList);
+
+        await client
+            .from('users')
+            .update({'stickers': nextList.toString()}).match({'uuid': uuid});
+      });
+
+      return null;
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +80,7 @@ class ResultPage extends HookConsumerWidget {
             return Container(
               color: animation.value,
               child: ref.watch(completeGoupon)
-                  ? const _Result()
+                  ? const _ResultSeel()
                   : _Goupon(controller),
             );
           },
@@ -76,8 +121,8 @@ class _Goupon extends HookConsumerWidget {
   }
 }
 
-class _Result extends HookConsumerWidget {
-  const _Result();
+class _ResultCoupon extends HookConsumerWidget {
+  const _ResultCoupon();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -105,6 +150,64 @@ class _Result extends HookConsumerWidget {
                     Text('【クーポンの名前】'),
                     Text('使える店名'),
                     Text('有効期限'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF7E7E7E),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              side: const BorderSide(
+                color: Color(0xFF7E7E7E),
+              ),
+            ),
+            child: const Text('ホームに戻る'),
+            onPressed: () {
+              ref.read(appRouterProvider).go('/guide_home');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ResultSeel extends HookConsumerWidget {
+  const _ResultSeel();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (name, desc, url) = ref.watch(stickers)[_gouponNumber];
+    return Container(
+      child: Column(
+        children: [
+          const Text('🎉 シールゲット！ 🎉'),
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+            child: Row(
+              children: [
+                Container(
+                  width: 84,
+                  height: 84,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(url),
+                    ),
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(color: textColor, fontSize: 16),
+                    ),
+                    Text(
+                      desc,
+                      style: const TextStyle(color: textColor, fontSize: 12),
+                    ),
                   ],
                 ),
               ],

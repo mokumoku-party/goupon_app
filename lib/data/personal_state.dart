@@ -15,6 +15,7 @@ class PersonalState with _$PersonalState {
     @Default(0.0) double longitude,
     String? nickname,
     String? description,
+    @Default([]) List<int> stickers,
   }) = _PersonalState;
 
   PersonalState._();

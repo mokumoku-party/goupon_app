@@ -114,7 +114,7 @@ class ContactPage extends HookConsumerWidget {
                     }
 
                     // 判定APIに投げる
-                    const url = 'http://35.77.199.18/check_gou_touch';
+                    const url = 'https://goupon.dicenull.com/check_gou_touch';
 
                     final time = DateTime.now().millisecondsSinceEpoch;
 

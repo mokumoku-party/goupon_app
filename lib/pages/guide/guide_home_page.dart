@@ -1,69 +1,65 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
+
 import 'package:app/app.dart';
+import 'package:app/routes/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-final isGuideProvider = StateProvider((ref) => false);
-
-class HomePage extends HookConsumerWidget {
-  const HomePage({super.key});
+class GuideHomePage extends HookConsumerWidget {
+  const GuideHomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final canGoupon = useState(true);
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: backgroundColor,
-        title: GestureDetector(
-          onTap: () async {
-            final pref = await SharedPreferences.getInstance();
-            await pref.clear();
-
-            const snackBar = SnackBar(
-              content: Text("ユーザー情報を削除しました"),
-            );
-            // ignore: use_build_context_synchronously
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          },
-          child: const Text(
-            'ぐーぽんっ！',
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+        title: const Text(
+          'Let\'s Trip!!',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: textColor,
           ),
         ),
-        actions: [_ToggleButton()],
       ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: _ProfileCard(),
+              child: Column(
+                children: [
+                  Text(
+                    '＼ 私が案内します！ ／',
+                    style: TextStyle(fontSize: 16, color: subTextColor),
+                  ),
+                  const SizedBox(height: 8),
+                  _ProfileCard(),
+                ],
+              ),
             ),
           ),
           SliverToBoxAdapter(
             child: _Title(
-              icon: SvgPicture.asset('assets/icons/crown.svg', width: 32),
+              icon: SvgPicture.asset(
+                'assets/icons/icon-thumbs-up.svg',
+                width: 32,
+                colorFilter: ColorFilter.mode(
+                  Color(0xff4b4b4b),
+                  BlendMode.srcIn,
+                ),
+              ),
               text: Row(
                 children: [
                   const SizedBox(width: 8),
-                  Text('案内ランキング'),
-                  const SizedBox(width: 8),
-                  Text(
-                    'N',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text('位'),
+                  Text('ぐーぽんっ！した場所'),
                 ],
               ),
             ),
@@ -71,50 +67,68 @@ class HomePage extends HookConsumerWidget {
           SliverList(
             delegate: SliverChildListDelegate([
               _ListItem(
-                date: '2023年12月32日',
-                desc: '履歴は最大3件表示',
+                date: '09時',
+                desc: '羽田空港',
               ),
               _ListItem(
-                date: '2023年10月01日',
-                desc: '夜ご飯食べた✨',
+                date: '10時',
+                desc: 'PiO PARK',
               ),
               _ListItem(
-                date: '2023年08月32日',
-                desc: '人類社会のすべての構成員の固有の尊厳と平等で譲ることのできない権利とを承認することは、',
+                date: '12時',
+                desc: 'ニイハオ',
                 isLast: true,
               ),
             ]),
           ),
           SliverPadding(
-            padding: EdgeInsets.only(top: 24),
+            padding: EdgeInsets.only(top: 24, bottom: 8),
             sliver: SliverToBoxAdapter(
               child: _Title(
-                icon: SvgPicture.asset('assets/icons/medal.svg', width: 32),
+                icon: SvgPicture.asset('assets/icons/ticket.svg', width: 32),
                 text: Row(
                   children: [
                     const SizedBox(width: 8),
-                    Text('称号'),
+                    Text('獲得クーポン'),
                   ],
                 ),
               ),
             ),
           ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              _ListItem(
-                date: '2023年12月32日',
-                desc: '大田区の賢者',
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 84 + 30 + 16,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 84 + 16,
+                    padding: EdgeInsets.only(left: 16),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/imgs/kani.png',
+                          width: 84,
+                          height: 84,
+                        ),
+                        const SizedBox(height: 8),
+                        Flexible(
+                          child: Text(
+                            '大田区名物のかに',
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
+                itemCount: 10,
               ),
-              _ListItem(
-                date: '2023年10月01日',
-                desc: 'ベテラン大田区案内人',
-              ),
-              _ListItem(
-                date: '2023年08月32日',
-                desc: 'かけだし大田区案内人',
-                isLast: true,
-              ),
-            ]),
+            ),
           ),
           SliverPadding(
             padding: EdgeInsets.only(top: 24, bottom: 8),
@@ -124,7 +138,7 @@ class HomePage extends HookConsumerWidget {
                 text: Row(
                   children: [
                     const SizedBox(width: 8),
-                    Text('シール'),
+                    Text('獲得シール'),
                   ],
                 ),
               ),
@@ -132,7 +146,7 @@ class HomePage extends HookConsumerWidget {
           ),
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 160,
+              height: 84 + 16 + 30,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
@@ -166,6 +180,50 @@ class HomePage extends HookConsumerWidget {
             ),
           ),
         ],
+      ),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 4),
+        child: Container(
+          height: 56,
+          color: backgroundColor,
+          child: ElevatedButton(
+            onPressed: () {
+              if (!canGoupon.value) return;
+
+              ref.read(appRouterProvider).go('/guide_home/contact');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  !canGoupon.value ? backgroundColor : primaryColor,
+              surfaceTintColor: Colors.transparent,
+              shape: const StadiumBorder(
+                side: BorderSide(color: primaryColor, width: 2),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/icons/icon-thumbs-up-outlined.svg',
+                  width: 40,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'ぐーぽんっ！する！',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: !canGoupon.value ? primaryColor : Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                SvgPicture.asset(
+                  'assets/icons/icon-thumbs-up-outlined-reverse.svg',
+                  width: 40,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -231,7 +289,7 @@ class _ListItem extends HookConsumerWidget {
             children: [
               const SizedBox(width: 16.0),
               Text(date),
-              const SizedBox(width: 8),
+              const SizedBox(width: 32),
               Flexible(
                 child: Text(
                   desc,
@@ -274,16 +332,6 @@ class _ProfileCard extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    SvgPicture.asset('assets/icons/medal.svg', width: 32),
-                    SvgPicture.asset('assets/icons/medal.svg', width: 32),
-                    SvgPicture.asset('assets/icons/medal.svg', width: 32),
-                    SvgPicture.asset('assets/icons/medal.svg', width: 32),
-                    SvgPicture.asset('assets/icons/medal.svg', width: 32),
-                  ],
-                ),
-                const SizedBox(height: 8),
                 Text(
                   'ユーザー名最大１０字',
                   style: TextStyle(
@@ -307,11 +355,6 @@ class _ProfileCard extends HookConsumerWidget {
                     fontSize: 12,
                     color: subSubColor,
                   ),
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: _EditButton(),
                 ),
               ],
             ),
@@ -340,68 +383,6 @@ class _Title extends HookConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [icon, text],
-        ),
-      ),
-    );
-  }
-}
-
-class _ToggleButton extends HookConsumerWidget {
-  const _ToggleButton();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isGuide = ref.watch(isGuideProvider);
-
-    return GestureDetector(
-      onTap: () {
-        ref.read(isGuideProvider.notifier).update((state) => !state);
-      },
-      child: Container(
-        width: 88,
-        height: 32,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isGuide ? primaryColor : subSubColor),
-              width: 20,
-              height: 20,
-              child: Center(
-                child: Text(
-                  '案',
-                  style: TextStyle(color: Colors.white, height: 1),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            SvgPicture.asset(
-              'assets/icons/icon-double-sided arrow.svg',
-              width: 20,
-              height: 20,
-              colorFilter: ColorFilter.mode(subSubColor, BlendMode.srcIn),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isGuide ? subSubColor : primaryColor),
-              width: 20,
-              height: 20,
-              child: Center(
-                child: Text(
-                  '旅',
-                  style: TextStyle(color: Colors.white, height: 1),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

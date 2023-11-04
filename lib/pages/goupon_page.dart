@@ -45,7 +45,7 @@ class GouponPage extends HookConsumerWidget {
             ),
             TextButton(
               onPressed: () {
-                ref.read(appRouterProvider).go('/result');
+                ref.read(appRouterProvider).go('/guide_home/result');
               },
               child: Text('リザルと'),
             )

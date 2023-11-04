@@ -118,7 +118,7 @@ class _Result extends HookConsumerWidget {
             ),
             child: const Text('ホームに戻る'),
             onPressed: () {
-              ref.read(appRouterProvider).go('/home');
+              ref.read(appRouterProvider).go('/guide_home');
             },
           ),
         ],

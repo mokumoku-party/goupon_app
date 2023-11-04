@@ -11,7 +11,6 @@ class GuidePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.arrow_back_ios),
         title: const Text(
           '案内人を探す',
           style: TextStyle(
@@ -93,7 +92,10 @@ class GuidePage extends HookConsumerWidget {
                                     ),
                                     child: const Text('依頼する'),
                                     onPressed: () {
-                                      ref.read(appRouterProvider).go('/map');
+                                      Navigator.pop(context);
+                                      ref
+                                          .read(appRouterProvider)
+                                          .go('/guide/map');
                                     },
                                   ),
                                   const SizedBox(width: 37),

@@ -1,5 +1,5 @@
+import 'package:app/pages/guide_page.dart';
 import 'package:app/pages/home_page.dart';
-
 import 'package:app/pages/map_page.dart';
 import 'package:app/pages/scaffold_with_navbar.dart';
 import 'package:go_router/go_router.dart';
@@ -28,7 +28,7 @@ final appRouterProvider = Provider(
               GoRoute(
                 path: '/guide',
                 builder: (context, state) {
-                  return const HomePage();
+                  return const GuidePage();
                 },
               ),
             ],

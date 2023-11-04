@@ -7,9 +7,6 @@ on:
   workflow_dispatch:
 
 
-env:
-  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
 
 jobs:
   build:
@@ -33,7 +30,8 @@ jobs:
           flutter-version: '3.13.0'
           channel: 'stable'
           cache: true
-      - run: echo '{"SUPABASE_URL":${{secrets.SUPABASE_URL}}, "SUPABASE_KEY":${{secrets.SUPABASE_KEY}}}' >> api_key.json
+      - run: touch api_key.json
+      - run: echo '{"SUPABASE_URL":${{ secrets.SUPABASE_URL }}, "SUPABASE_KEY":${{ secrets.SUPABASE_KEY }} }' >> api_key.json
       - run: flutter --version
       - run: flutter pub get
       - run: flutter build web --base-href /${{ steps.version.outputs.repository }}/ --dart-define-from-file=api_key.json

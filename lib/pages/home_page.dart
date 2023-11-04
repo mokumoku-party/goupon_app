@@ -1,9 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:app/app.dart';
-
+import 'package:app/routes/app_router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -30,7 +29,11 @@ class HomePage extends HookConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: _ProfileCard(),
+              child: GestureDetector(
+                  onTap: () {
+                    ref.read(appRouterProvider).go('/contact');
+                  },
+                  child: _ProfileCard()),
             ),
           ),
           SliverToBoxAdapter(
@@ -157,24 +160,29 @@ class HomePage extends HookConsumerWidget {
   }
 }
 
-class _Title extends HookConsumerWidget {
-  final Widget icon;
-  final Widget text;
-
-  const _Title({
-    required this.icon,
-    required this.text,
-  });
-
+/// 編集するボタン
+class _EditButton extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: DefaultTextStyle(
-        style: TextStyle(color: textColor, fontSize: 18),
+    return Container(
+      width: 100,
+      height: 20,
+      padding: EdgeInsets.zero,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: subSubColor,
+          shape: const StadiumBorder(),
+        ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [icon, text],
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.edit, size: 10, color: Colors.white),
+            Text(
+              '編集する',
+              style: TextStyle(fontSize: 8, color: Colors.white),
+            ),
+          ],
         ),
       ),
     );
@@ -303,29 +311,24 @@ class _ProfileCard extends HookConsumerWidget {
   }
 }
 
-/// 編集するボタン
-class _EditButton extends HookConsumerWidget {
+class _Title extends HookConsumerWidget {
+  final Widget icon;
+  final Widget text;
+
+  const _Title({
+    required this.icon,
+    required this.text,
+  });
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      width: 100,
-      height: 20,
-      padding: EdgeInsets.zero,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: subSubColor,
-          shape: const StadiumBorder(),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DefaultTextStyle(
+        style: TextStyle(color: textColor, fontSize: 18),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.edit, size: 10, color: Colors.white),
-            Text(
-              '編集する',
-              style: TextStyle(fontSize: 8, color: Colors.white),
-            ),
-          ],
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [icon, text],
         ),
       ),
     );

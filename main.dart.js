@@ -34878,7 +34878,7 @@ var $async$aX0=A.A(function(a,b){if(a===1)return A.w(b,r)
 while(true)switch(s){case 0:if($.al==null)A.a2X()
 $.al.toString
 s=2
-return A.u(A.aGl("",""),$async$aX0)
+return A.u(A.aGl("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqZHJ4ZXptYXhmbGdzZmhoeHJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTkwMjA2MDYsImV4cCI6MjAxNDU5NjYwNn0.jAz3JpNpRgO73y6wIOXRnjtw7Lh1rDQyVUPCHuHt0EQ","https://xjdrxezmaxflgsfhhxrz.supabase.co"),$async$aX0)
 case 2:if($.al==null)A.a2X()
 q=$.al
 q.toString

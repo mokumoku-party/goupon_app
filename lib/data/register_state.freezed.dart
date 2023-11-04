@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$RegisterState {
   UserType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  XFile? get iconPath => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $RegisterStateCopyWith<RegisterState> get copyWith =>
@@ -30,7 +31,7 @@ abstract class $RegisterStateCopyWith<$Res> {
           RegisterState value, $Res Function(RegisterState) then) =
       _$RegisterStateCopyWithImpl<$Res, RegisterState>;
   @useResult
-  $Res call({UserType type, String name});
+  $Res call({UserType type, String name, XFile? iconPath});
 }
 
 /// @nodoc
@@ -48,6 +49,7 @@ class _$RegisterStateCopyWithImpl<$Res, $Val extends RegisterState>
   $Res call({
     Object? type = null,
     Object? name = null,
+    Object? iconPath = freezed,
   }) {
     return _then(_value.copyWith(
       type: null == type
@@ -58,6 +60,10 @@ class _$RegisterStateCopyWithImpl<$Res, $Val extends RegisterState>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      iconPath: freezed == iconPath
+          ? _value.iconPath
+          : iconPath // ignore: cast_nullable_to_non_nullable
+              as XFile?,
     ) as $Val);
   }
 }
@@ -70,7 +76,7 @@ abstract class _$$RegisterStateImplCopyWith<$Res>
       __$$RegisterStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UserType type, String name});
+  $Res call({UserType type, String name, XFile? iconPath});
 }
 
 /// @nodoc
@@ -86,6 +92,7 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
   $Res call({
     Object? type = null,
     Object? name = null,
+    Object? iconPath = freezed,
   }) {
     return _then(_$RegisterStateImpl(
       type: null == type
@@ -96,6 +103,10 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      iconPath: freezed == iconPath
+          ? _value.iconPath
+          : iconPath // ignore: cast_nullable_to_non_nullable
+              as XFile?,
     ));
   }
 }
@@ -103,7 +114,8 @@ class __$$RegisterStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$RegisterStateImpl implements _RegisterState {
-  _$RegisterStateImpl({this.type = UserType.none, this.name = ''});
+  _$RegisterStateImpl(
+      {this.type = UserType.none, this.name = '', this.iconPath});
 
   @override
   @JsonKey()
@@ -111,10 +123,12 @@ class _$RegisterStateImpl implements _RegisterState {
   @override
   @JsonKey()
   final String name;
+  @override
+  final XFile? iconPath;
 
   @override
   String toString() {
-    return 'RegisterState(type: $type, name: $name)';
+    return 'RegisterState(type: $type, name: $name, iconPath: $iconPath)';
   }
 
   @override
@@ -123,11 +137,13 @@ class _$RegisterStateImpl implements _RegisterState {
         (other.runtimeType == runtimeType &&
             other is _$RegisterStateImpl &&
             (identical(other.type, type) || other.type == type) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.iconPath, iconPath) ||
+                other.iconPath == iconPath));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, type, name);
+  int get hashCode => Object.hash(runtimeType, type, name, iconPath);
 
   @JsonKey(ignore: true)
   @override
@@ -137,13 +153,17 @@ class _$RegisterStateImpl implements _RegisterState {
 }
 
 abstract class _RegisterState implements RegisterState {
-  factory _RegisterState({final UserType type, final String name}) =
-      _$RegisterStateImpl;
+  factory _RegisterState(
+      {final UserType type,
+      final String name,
+      final XFile? iconPath}) = _$RegisterStateImpl;
 
   @override
   UserType get type;
   @override
   String get name;
+  @override
+  XFile? get iconPath;
   @override
   @JsonKey(ignore: true)
   _$$RegisterStateImplCopyWith<_$RegisterStateImpl> get copyWith =>

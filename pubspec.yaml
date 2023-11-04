@@ -31,4 +31,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/imgs/kani.png
+    - assets/imgs/
+    - assets/icons/

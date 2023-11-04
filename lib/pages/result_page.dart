@@ -5,13 +5,18 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
-final completeGoupon = StateProvider((ref) => false);
+final completeGoupon = StateProvider.autoDispose((ref) => false);
 
 class ResultPage extends HookConsumerWidget {
   const ResultPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final controller = useAnimationController();
+    final animation = ColorTween(begin: Colors.grey, end: Colors.white)
+        .chain(CurveTween(curve: Curves.easeInOut))
+        .animate(controller);
+
     return Scaffold(
       appBar: AppBar(
         // leading: const Icon(Icons.arrow_back_ios),
@@ -23,38 +28,47 @@ class ResultPage extends HookConsumerWidget {
           ),
         ),
       ),
-      body: ref.watch(completeGoupon) ? const _Result() : const _Goupon(),
+      body: Center(
+        child: AnimatedBuilder(
+          animation: animation,
+          builder: (context, child) {
+            return Container(
+                color: animation.value,
+                child: ref.watch(completeGoupon)
+                    ? const _Result()
+                    : _Goupon(controller));
+          },
+        ),
+      ),
     );
   }
 }
 
 class _Goupon extends HookConsumerWidget {
-  const _Goupon();
+  final AnimationController controller;
+
+  const _Goupon(this.controller);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = useAnimationController();
-
     return Center(
-      child: Container(
-        color: Colors.white,
-        child: DotLottieLoader.fromAsset("assets/imgs/goupon.lottie",
-            frameBuilder: (BuildContext ctx, DotLottie? dotlottie) {
-          if (dotlottie != null) {
-            return Lottie.memory(dotlottie.animations.values.single,
-                controller: controller, onLoaded: (composition) {
-              controller
-                ..duration = composition.duration
-                ..forward().whenComplete(() {
-                  ref.read(completeGoupon.notifier).state = true;
-                });
-            });
-          } else {
-            return Container();
-          }
-        }),
-      ),
-    );
+        child: DotLottieLoader.fromAsset(
+      "assets/imgs/goupon.lottie",
+      frameBuilder: (BuildContext ctx, DotLottie? dotlottie) {
+        if (dotlottie != null) {
+          return Lottie.memory(dotlottie.animations.values.single,
+              controller: controller, onLoaded: (composition) {
+            controller
+              ..duration = composition.duration
+              ..forward().whenComplete(() {
+                ref.read(completeGoupon.notifier).state = true;
+              });
+          });
+        } else {
+          return Container();
+        }
+      },
+    ));
   }
 }
 

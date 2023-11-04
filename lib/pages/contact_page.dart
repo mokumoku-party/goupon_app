@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app/app.dart';
+import 'package:app/routes/app_router.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -41,6 +42,7 @@ final cameraControllerProvider =
 final dio = Dio();
 final _isLoadingProvider = StateProvider((ref) => false);
 final _retryEventProvider = StateProvider((ref) => false);
+final _successEventProvider = StateProvider((ref) => false);
 
 class ContactPage extends HookConsumerWidget {
   const ContactPage({super.key});
@@ -64,9 +66,15 @@ class ContactPage extends HookConsumerWidget {
                   ),
                 ),
                 const Positioned.fill(
-                    child: Center(
-                  child: _SuccessDialog(),
-                ))
+                  child: Center(
+                    child: _SuccessDialog(),
+                  ),
+                ),
+                const Positioned.fill(
+                  child: Center(
+                    child: _RetryDialog(),
+                  ),
+                ),
               ],
             ),
             Flexible(
@@ -105,10 +113,12 @@ class ContactPage extends HookConsumerWidget {
                     // 判定APIに投げる
                     const url = 'http://35.77.199.18/check_gou_touch';
 
+                    final time = DateTime.now().millisecondsSinceEpoch;
+
                     final formData = FormData.fromMap({
                       'upload_file': MultipartFile.fromBytes(
                         buffer,
-                        filename: 'contact.png',
+                        filename: 'contact_$time.png',
                         contentType: MediaType.parse('image/png'),
                       ),
                     });
@@ -132,6 +142,10 @@ class ContactPage extends HookConsumerWidget {
                     ref
                         .read(_retryEventProvider.notifier)
                         .update((_) => !success);
+                    ref
+                        .read(_successEventProvider.notifier)
+                        .update((_) => success);
+
                     print('complete $success');
                     ref
                         .read(_isLoadingProvider.notifier)
@@ -175,21 +189,24 @@ class _LoadingIndicator extends HookConsumerWidget {
   }
 }
 
-class _SuccessDialog extends HookConsumerWidget {
-  const _SuccessDialog();
+class _RetryDialog extends HookConsumerWidget {
+  const _RetryDialog();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final retry = ref.watch(_retryEventProvider);
     useEffect(() {
+      if (!retry) return () {};
+
       final timer = Timer(const Duration(milliseconds: 3000), () {
         ref.read(_retryEventProvider.notifier).update((state) => false);
       });
 
       return timer.cancel;
-    });
+    }, [retry]);
 
     return AnimatedOpacity(
-      opacity: ref.watch(_retryEventProvider) ? 1.0 : 0.0,
+      opacity: retry ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 100),
       child: Container(
         width: 287,
@@ -206,6 +223,49 @@ class _SuccessDialog extends HookConsumerWidget {
               SvgPicture.asset('assets/icons/icon-sad.svg'),
               const Text('ぐーぽんっ！できませんでした', style: TextStyle(fontSize: 16)),
               const Text('再度撮影してみてください', style: TextStyle(fontSize: 16)),
+            ],
+          ),
+        )),
+      ),
+    );
+  }
+}
+
+class _SuccessDialog extends HookConsumerWidget {
+  const _SuccessDialog();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final success = ref.watch(_successEventProvider);
+    useEffect(() {
+      if (!success) return () {};
+
+      final timer = Timer(const Duration(milliseconds: 3000), () {
+        ref.read(appRouterProvider).go('/goupon');
+      });
+
+      return timer.cancel;
+    }, [success]);
+
+    return AnimatedOpacity(
+      opacity: success ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 100),
+      child: Container(
+        width: 287,
+        height: 142,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+        ),
+        child: const Center(
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: Column(
+            children: [
+              Text(
+                'ぐーぽんっ！',
+                style: TextStyle(fontSize: 60),
+              )
             ],
           ),
         )),

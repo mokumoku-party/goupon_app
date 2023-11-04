@@ -77,7 +77,7 @@ class MapPage extends HookConsumerWidget {
               initialCameraPosition: CameraPosition(
                 target: LatLng(statePosition.value?.latitude ?? 35.5583744,
                     statePosition.value?.longitude ?? 139.7555427),
-                zoom: 17,
+                zoom: 18,
               ),
               widgetMarkers: [
                 WidgetMarker(
@@ -97,7 +97,84 @@ class MapPage extends HookConsumerWidget {
                   ),
                 ),
               ]),
-          Text('距離 ${distance.value}'),
+          Container(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0.0, 1.0),
+                      blurRadius: 5.0,
+                    )
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 84,
+                      height: 84,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: AssetImage('assets/imgs/kani.png'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    SizedBox(
+                      width: 230,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'あと',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                '${(distance.value / 80).ceil()}',
+                                style: const TextStyle(fontSize: 32),
+                              ),
+                              const Text(
+                                '分で合流です！',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ],
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: const Color(0xFF7E7E7E),
+                              backgroundColor: Colors.white,
+                              elevation: 0,
+                              side: const BorderSide(
+                                color: Color(0xFF7E7E7E),
+                              ),
+                            ),
+                            child: const Text('合流した！'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

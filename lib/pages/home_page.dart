@@ -71,7 +71,6 @@ class HomePage extends HookConsumerWidget {
           onTap: () async {
             ref.read(appRouterProvider).go('/guide_home/result');
             return;
-
             final pref = await SharedPreferences.getInstance();
             await pref.clear();
 
@@ -357,48 +356,45 @@ class _SeelList extends HookConsumerWidget {
         final client = Supabase.instance.client;
 
         final uuid = ref.read(personalProvider).uuid;
-        final seels =
-            await client.from('users').select('stickers').match({'uuid': uuid});
+        final seels = await client.from('users').select().match({'uuid': uuid});
         final idData = List<Map<String, dynamic>>.from(seels).first['stickers'];
-        final currentList =
-            const JsonDecoder().convert(idData ?? '[]') as List<dynamic>;
 
-        final sticker = await client.from('sticker').select();
-        final seelUrlList = List<Map<String, dynamic>>.from(sticker);
-// TODO：シール取得が取得動かず
-        stickerUrl.value = currentList
-            .map((e) => seelUrlList.firstWhere(
-                (seel) => seel["id"] == e)['sticker_img_url'] as String)
-            .toList();
+        final currentList =
+            List<String>.from(const JsonDecoder().convert(idData ?? '[]'))
+                .map((e) => int.parse(e));
+
+        final stickers = await client.from('sticker').select<PostgrestList>();
+        final seelUrlList = List<Map<String, dynamic>>.from(stickers);
+        stickerUrl.value = List<String>.from(seelUrlList
+            .where((e) => currentList.contains(e['id']))
+            .map((e) => e['sticker_img_url']));
       });
       return null;
-    }, const []);
+    }, []);
 
     return SizedBox(
       height: 160,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        reverse: true,
         itemBuilder: (context, index) {
+          final data = stickerUrl.value[index];
+
           return Container(
             width: 84 + 16,
             padding: EdgeInsets.only(left: 16),
-            child: Column(
-                children: stickerUrl.value
-                    .map(
-                      (url) => Container(
-                        width: 84,
-                        height: 84,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(url),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList()),
+            child: Container(
+              width: 84,
+              height: 84,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(data),
+                ),
+              ),
+            ),
           );
         },
-        itemCount: 10,
+        itemCount: stickerUrl.value.length,
       ),
     );
   }

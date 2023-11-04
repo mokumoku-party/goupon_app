@@ -1,6 +1,7 @@
 import 'package:app/app.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
@@ -12,8 +13,13 @@ final cameraControllerProvider =
     FutureProvider.autoDispose<CameraController>((ref) async {
   // 利用可能なカメラの一覧を取得
   final cameras = await availableCameras();
+  CameraDescription camera;
   // 内カメをセット　※0: 外カメ　1: 内カメ
-  final camera = cameras[1];
+  if (!kIsWeb) {
+    camera = cameras[1];
+  } else {
+    camera = cameras[0];
+  }
   final controller = CameraController(
     camera,
     ResolutionPreset.high,
@@ -40,7 +46,8 @@ class ContactPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       body: controller.when(
-        data: (data) => Row(
+        data: (data) => Flex(
+          direction: kIsWeb ? Axis.vertical : Axis.horizontal,
           children: [
             CameraPreview(data),
             Center(
@@ -48,16 +55,21 @@ class ContactPage extends HookConsumerWidget {
                 onPressed: () async {
                   final file = await data.takePicture();
 
-                  final directory = await getExternalStorageDirectory();
-                  if (directory == null) return;
+                  if (!kIsWeb) {
+                    final directory = await getExternalStorageDirectory();
+                    if (directory == null) return;
+                  }
 
                   // 端末に画像保存
                   final buffer = await file.readAsBytes();
-                  final result = await ImageGallerySaver.saveImage(
-                    buffer,
-                    name: file.name,
-                  );
-                  print(result);
+
+                  if (!kIsWeb) {
+                    final result = await ImageGallerySaver.saveImage(
+                      buffer,
+                      name: file.name,
+                    );
+                    print(result);
+                  }
 
                   // 判定APIに投げる
                   const url = 'http://35.77.199.18/check_gou_touch';

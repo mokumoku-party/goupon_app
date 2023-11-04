@@ -14,6 +14,7 @@ class RegisterProfilePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = useTextEditingController();
     final name = useState('');
+    final isRegister = useState(false);
 
     useEffect(() {
       controller.addListener(() {
@@ -117,10 +118,28 @@ class RegisterProfilePage extends HookConsumerWidget {
                 onPressed: () async {
                   if (name.value.isEmpty) return;
 
-                  ref.read(registerNotifier.notifier).setName(name.value);
-                  await ref.read(registerNotifier.notifier).insert();
-                  // ignore: use_build_context_synchronously
-                  context.go('/home');
+                  isRegister.value = true;
+                  try {
+                    ref.read(registerNotifier.notifier).setName(name.value);
+                    await ref.read(registerNotifier.notifier).insert();
+                    // ignore: use_build_context_synchronously
+                    context.go('/home');
+                  } catch (e) {
+                    final snackBar = SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text(
+                        'エラー： $e',
+                        style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    );
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    isRegister.value = false;
+                    return;
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
@@ -130,12 +149,16 @@ class RegisterProfilePage extends HookConsumerWidget {
                     side: BorderSide(color: primaryColor, width: 2),
                   ),
                 ),
-                child: Text(
-                  '次へ',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: name.value.isEmpty ? primaryColor : Colors.white,
-                  ),
+                child: Stack(
+                  children: [
+                    Text(
+                      isRegister.value ? '登録中...' : '登録する！',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: name.value.isEmpty ? primaryColor : Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

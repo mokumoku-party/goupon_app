@@ -1,6 +1,7 @@
 import 'package:app/data/register_state.dart';
 import 'package:app/data/user_type.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -32,5 +33,10 @@ class RegisterNotifier extends Notifier<RegisterState> {
         'uuid': uuid,
       },
     );
+
+    final pref = await SharedPreferences.getInstance();
+    await pref.setString('name', state.name);
+    await pref.setString('type', state.type.toString());
+    await pref.setString('uuid', uuid);
   }
 }

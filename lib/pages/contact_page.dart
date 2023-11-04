@@ -40,12 +40,12 @@ final cameraControllerProvider =
 });
 
 final dio = Dio();
-final _isLoadingProvider = StateProvider((ref) => false);
-final _progressProvider = StateProvider((ref) => -1);
-final _retryEventProvider = StateProvider((ref) => false);
+final _isLoadingProvider = StateProvider.autoDispose((ref) => false);
+final _progressRcvProvider = StateProvider.autoDispose<double>((ref) => 0);
+final _progressSndProvider = StateProvider.autoDispose<double>((ref) => 0);
+final _retryEventProvider = StateProvider.autoDispose((ref) => false);
 
-final _successEventProvider = StateProvider((ref) => false);
-final _totalProvider = StateProvider((ref) => -1);
+final _successEventProvider = StateProvider.autoDispose((ref) => false);
 
 class ContactPage extends HookConsumerWidget {
   const ContactPage({super.key});
@@ -135,10 +135,15 @@ class ContactPage extends HookConsumerWidget {
                         contentType: 'multipart/form-data',
                       ),
                       onSendProgress: (count, total) {
+                        ref.read(_progressSndProvider.notifier).state =
+                            count.toDouble() / total.toDouble();
                         print('s: $count /  $total');
                       },
-                      onReceiveProgress: (count, total) =>
-                          print('r: $count / $total'),
+                      onReceiveProgress: (count, total) {
+                        ref.read(_progressRcvProvider.notifier).state =
+                            count.toDouble() / total.toDouble();
+                        print('r: $count / $total');
+                      },
                     );
 
                     final success = response.data as bool;
@@ -154,6 +159,8 @@ class ContactPage extends HookConsumerWidget {
                     ref
                         .read(_isLoadingProvider.notifier)
                         .update((state) => false);
+                    ref.read(_progressRcvProvider.notifier).state = 0;
+                    ref.read(_progressSndProvider.notifier).state = 0;
 
                     return;
                   },
@@ -183,12 +190,32 @@ class _LoadingIndicator extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(_isLoadingProvider);
 
+    final snd = ref.watch(_progressSndProvider);
+    final rcv = ref.watch(_progressRcvProvider);
+
+    print('$snd $rcv ${(snd + rcv) / 2.0}');
+
     return AnimatedOpacity(
       opacity: isLoading ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 50),
-      child: const CircularProgressIndicator(
-        strokeWidth: 8,
-        color: Colors.white,
+      child: SizedBox(
+        width: 200,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(4),
+              child: Text(
+                '判定中',
+                style: TextStyle(color: textColor, fontSize: 32),
+              ),
+            ),
+            LinearProgressIndicator(
+              value: (snd + rcv) / 2.0,
+            ),
+          ],
+        ),
       ),
     );
   }

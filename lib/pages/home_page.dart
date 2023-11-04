@@ -250,6 +250,8 @@ class _ListItem extends HookConsumerWidget {
 class _ProfileCard extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(personalProvider);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -284,7 +286,7 @@ class _ProfileCard extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'ユーザー名最大１０字',
+                  user.name,
                   style: TextStyle(
                     fontSize: 18,
                     color: textColor,
@@ -293,7 +295,7 @@ class _ProfileCard extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'ふたつ名は最大１５文字ですよ！',
+                  user.nickname ?? '名無しのふたつ名',
                   style: TextStyle(
                     fontSize: 14,
                     color: textColor,
@@ -301,7 +303,7 @@ class _ProfileCard extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'ユーザーのプロフィール文とかあったほうがいいと思ったんです。2行くらい。',
+                  user.description ?? '',
                   style: TextStyle(
                     fontSize: 12,
                     color: subSubColor,

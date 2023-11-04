@@ -11,10 +11,6 @@ import 'package:geolocator/geolocator.dart';
 class MapPage extends HookConsumerWidget {
   const MapPage({super.key});
 
-  void _onMapCreated(GoogleMapController controller) {
-    // GoogleMapController mapController = controller;
-  }
-
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high, //正確性:highはAndroid(0-100m),iOS(10m)
     distanceFilter: 1,
@@ -26,6 +22,12 @@ class MapPage extends HookConsumerWidget {
     final guidePosition =
         useState<LatLng>(const LatLng(35.5583744, 139.7555427));
     final distance = useState<double>(10000000000000000000);
+    final mapController = useState<GoogleMapController?>(null);
+    final cameraSetFlag = useState<bool>(false);
+
+    void _onMapCreated(GoogleMapController controller) {
+      mapController.value = controller;
+    }
 
     useEffect(() {
       StreamSubscription<Position>? positionStream;
@@ -39,8 +41,14 @@ class MapPage extends HookConsumerWidget {
         positionStream =
             Geolocator.getPositionStream(locationSettings: locationSettings)
                 .listen((Position? position) {
-          statePosition.value = position;
           if (position == null) return;
+          statePosition.value = position;
+
+          if (mapController.value != null && !cameraSetFlag.value) {
+            mapController.value!.moveCamera(CameraUpdate.newLatLng(
+                LatLng(position.latitude, position.longitude)));
+            cameraSetFlag.value = true;
+          }
 
           distance.value = Geolocator.distanceBetween(
             position.latitude,
@@ -67,8 +75,9 @@ class MapPage extends HookConsumerWidget {
               onMapCreated: _onMapCreated,
               myLocationEnabled: true,
               initialCameraPosition: CameraPosition(
-                target: _center,
-                zoom: 14.4746,
+                target: LatLng(statePosition.value?.latitude ?? 35.5583744,
+                    statePosition.value?.longitude ?? 139.7555427),
+                zoom: 17,
               ),
               widgetMarkers: [
                 WidgetMarker(

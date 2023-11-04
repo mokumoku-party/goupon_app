@@ -7,7 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final appRouterProvider = Provider(
   (ref) => GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/map',
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

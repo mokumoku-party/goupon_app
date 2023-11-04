@@ -14,7 +14,7 @@ class GouponPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return WillPopScope(
       onWillPop: () async {
-        ref.read(appRouterProvider).pop();
+        ref.read(appRouterProvider).go('/home');
         return false;
       },
       child: Scaffold(
@@ -30,14 +30,27 @@ class GouponPage extends HookConsumerWidget {
             ),
           ),
         ),
-        body: DotLottieLoader.fromAsset("assets/imgs/animation.lottie",
-            frameBuilder: (BuildContext ctx, DotLottie? dotlottie) {
-          if (dotlottie != null) {
-            return Lottie.memory(dotlottie.animations.values.single);
-          } else {
-            return Container();
-          }
-        }),
+        body: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              child: DotLottieLoader.fromAsset("assets/imgs/trans.lottie",
+                  frameBuilder: (BuildContext ctx, DotLottie? dotlottie) {
+                if (dotlottie != null) {
+                  return Lottie.memory(dotlottie.animations.values.single);
+                } else {
+                  return Container();
+                }
+              }),
+            ),
+            TextButton(
+              onPressed: () {
+                ref.read(appRouterProvider).go('/result');
+              },
+              child: Text('リザルと'),
+            )
+          ],
+        ),
       ),
     );
   }

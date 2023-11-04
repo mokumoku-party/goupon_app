@@ -3,6 +3,7 @@ import 'package:app/pages/goupon_page.dart';
 import 'package:app/pages/guide_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/map_page.dart';
+import 'package:app/pages/result_page.dart';
 import 'package:app/pages/scaffold_with_navbar.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -74,6 +75,12 @@ final appRouterProvider = Provider(
           path: '/goupon',
           builder: (context, state) => const GouponPage(),
         ),
+        GoRoute(
+          path: '/result',
+          builder: (context, state) {
+            return const ResultPage();
+          },
+        )
       ],
       redirect: (context, state) {
         // コンタクトページだけ横固定

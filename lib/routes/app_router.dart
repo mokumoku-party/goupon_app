@@ -64,6 +64,16 @@ final appRouterProvider = Provider((ref) {
                         path: 'contact',
                         builder: (context, state) => const ContactPage(),
                       ),
+                      GoRoute(
+                        path: 'goupon',
+                        builder: (context, state) => const GouponPage(),
+                      ),
+                      GoRoute(
+                        path: 'result',
+                        builder: (context, state) {
+                          return const ResultPage();
+                        },
+                      )
                     ]),
               ],
             ),
@@ -97,16 +107,6 @@ final appRouterProvider = Provider((ref) {
           path: '/register_profile',
           builder: (context, state) => const RegisterProfilePage(),
         ),
-        GoRoute(
-          path: '/goupon',
-          builder: (context, state) => const GouponPage(),
-        ),
-        GoRoute(
-          path: '/result',
-          builder: (context, state) {
-            return const ResultPage();
-          },
-        )
       ],
       redirect: (context, state) {
         // コンタクトページだけ横固定

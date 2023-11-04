@@ -283,7 +283,7 @@ class _SuccessDialog extends HookConsumerWidget {
 
       final timer = Timer(const Duration(milliseconds: 3000), () {
         ref.read(_successEventProvider.notifier).update((state) => false);
-        ref.read(appRouterProvider).go('/goupon');
+        ref.read(appRouterProvider).go('/guide_home/goupon');
       });
 
       return timer.cancel;

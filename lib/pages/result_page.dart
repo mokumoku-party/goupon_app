@@ -55,16 +55,19 @@ class _Goupon extends HookConsumerWidget {
     return Center(
         child: DotLottieLoader.fromAsset(
       "assets/imgs/goupon.lottie",
-      frameBuilder: (BuildContext ctx, DotLottie? dotlottie) {
+      frameBuilder: (ctx, dotlottie) {
         if (dotlottie != null) {
-          return Lottie.memory(dotlottie.animations.values.single,
-              controller: controller, onLoaded: (composition) {
-            controller
-              ..duration = composition.duration
-              ..forward().whenComplete(() {
-                ref.read(completeGoupon.notifier).state = true;
-              });
-          });
+          return Lottie.memory(
+            dotlottie.animations.values.single,
+            controller: controller,
+            onLoaded: (composition) {
+              controller
+                ..duration = composition.duration
+                ..forward().whenComplete(() {
+                  ref.read(completeGoupon.notifier).state = true;
+                });
+            },
+          );
         } else {
           return Container();
         }

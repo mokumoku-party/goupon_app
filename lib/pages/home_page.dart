@@ -20,9 +20,6 @@ class HomePage extends HookConsumerWidget {
         backgroundColor: backgroundColor,
         title: GestureDetector(
           onTap: () async {
-            ref.read(appRouterProvider).go('/result');
-            return;
-
             final pref = await SharedPreferences.getInstance();
             await pref.clear();
 

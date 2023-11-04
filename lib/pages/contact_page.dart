@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:app/app.dart';
+import 'package:app/routes/app_router.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -35,6 +40,12 @@ final cameraControllerProvider =
 });
 
 final dio = Dio();
+final _isLoadingProvider = StateProvider((ref) => false);
+final _progressProvider = StateProvider((ref) => -1);
+final _retryEventProvider = StateProvider((ref) => false);
+
+final _successEventProvider = StateProvider((ref) => false);
+final _totalProvider = StateProvider((ref) => -1);
 
 class ContactPage extends HookConsumerWidget {
   const ContactPage({super.key});
@@ -49,61 +60,108 @@ class ContactPage extends HookConsumerWidget {
         data: (data) => Flex(
           direction: kIsWeb ? Axis.vertical : Axis.horizontal,
           children: [
-            CameraPreview(data),
-            Center(
-              child: IconButton(
-                onPressed: () async {
-                  final file = await data.takePicture();
+            Stack(
+              children: [
+                CameraPreview(data),
+                const Positioned.fill(
+                  child: Center(
+                    child: _LoadingIndicator(),
+                  ),
+                ),
+                const Positioned.fill(
+                  child: Center(
+                    child: _SuccessDialog(),
+                  ),
+                ),
+                const Positioned.fill(
+                  child: Center(
+                    child: _RetryDialog(),
+                  ),
+                ),
+              ],
+            ),
+            Flexible(
+              child: Center(
+                child: IconButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    fixedSize: const Size(128, 128),
+                    shape: const CircleBorder(),
+                  ),
+                  onPressed: () async {
+                    if (ref.read(_isLoadingProvider)) {
+                      return;
+                    }
 
-                  if (!kIsWeb) {
-                    final directory = await getExternalStorageDirectory();
-                    if (directory == null) return;
-                  }
+                    ref
+                        .read(_isLoadingProvider.notifier)
+                        .update((state) => true);
+                    final file = await data.takePicture();
 
-                  // 端末に画像保存
-                  final buffer = await file.readAsBytes();
+                    if (!kIsWeb) {
+                      final directory = await getExternalStorageDirectory();
+                      if (directory == null) return;
+                    }
 
-                  if (!kIsWeb) {
-                    final result = await ImageGallerySaver.saveImage(
-                      buffer,
-                      name: file.name,
-                    );
-                    print(result);
-                  }
+                    // 端末に画像保存
+                    final buffer = await file.readAsBytes();
+                    if (!kIsWeb) {
+                      final result = await ImageGallerySaver.saveImage(
+                        buffer,
+                        name: file.name,
+                      );
+                      print(result);
+                    }
 
-                  // 判定APIに投げる
-                  const url = 'http://35.77.199.18/check_gou_touch';
+                    // 判定APIに投げる
+                    const url = 'http://35.77.199.18/check_gou_touch';
 
-                  final formData = FormData.fromMap({
-                    'upload_file': MultipartFile.fromBytes(
-                      buffer,
-                      filename: 'hoge.png',
-                      contentType: MediaType.parse('image/png'),
-                    ),
-                  });
-                  print('start upload');
-                  final response = await dio.post(
-                    url,
-                    data: formData,
-                    options: Options(
-                      headers: {
-                        'accept': 'application/json',
+                    final time = DateTime.now().millisecondsSinceEpoch;
+
+                    final formData = FormData.fromMap({
+                      'upload_file': MultipartFile.fromBytes(
+                        buffer,
+                        filename: 'contact_$time.png',
+                        contentType: MediaType.parse('image/png'),
+                      ),
+                    });
+                    final response = await dio.post(
+                      url,
+                      data: formData,
+                      options: Options(
+                        headers: {
+                          'accept': 'application/json',
+                        },
+                        contentType: 'multipart/form-data',
+                      ),
+                      onSendProgress: (count, total) {
+                        print('s: $count /  $total');
                       },
-                      contentType: 'multipart/form-data',
-                    ),
-                    onSendProgress: (count, total) =>
-                        print('s: $count /  $total'),
-                    onReceiveProgress: (count, total) =>
-                        print('r: $count / $total'),
-                  );
-                  print('complete');
-                  final success = response.data as bool;
+                      onReceiveProgress: (count, total) =>
+                          print('r: $count / $total'),
+                    );
 
-                  return;
-                },
-                icon: const Icon(
-                  Icons.circle,
-                  size: 128,
+                    final success = response.data as bool;
+
+                    ref
+                        .read(_retryEventProvider.notifier)
+                        .update((_) => !success);
+                    ref
+                        .read(_successEventProvider.notifier)
+                        .update((_) => success);
+
+                    print('complete $success');
+                    ref
+                        .read(_isLoadingProvider.notifier)
+                        .update((state) => false);
+
+                    return;
+                  },
+                  icon: SvgPicture.asset(
+                    'assets/icons/icon-thumbs-up.svg',
+                    width: 80,
+                    height: 80,
+                  ),
                 ),
               ),
             ),
@@ -113,6 +171,110 @@ class ContactPage extends HookConsumerWidget {
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
+      ),
+    );
+  }
+}
+
+class _LoadingIndicator extends HookConsumerWidget {
+  const _LoadingIndicator();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(_isLoadingProvider);
+
+    return AnimatedOpacity(
+      opacity: isLoading ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 50),
+      child: const CircularProgressIndicator(
+        strokeWidth: 8,
+        color: Colors.white,
+      ),
+    );
+  }
+}
+
+class _RetryDialog extends HookConsumerWidget {
+  const _RetryDialog();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final retry = ref.watch(_retryEventProvider);
+    useEffect(() {
+      if (!retry) return () {};
+
+      final timer = Timer(const Duration(milliseconds: 3000), () {
+        ref.read(_retryEventProvider.notifier).update((state) => false);
+      });
+
+      return timer.cancel;
+    }, [retry]);
+
+    return AnimatedOpacity(
+      opacity: retry ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 100),
+      child: Container(
+        width: 287,
+        height: 142,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+        ),
+        child: Center(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: Column(
+            children: [
+              SvgPicture.asset('assets/icons/icon-sad.svg'),
+              const Text('ぐーぽんっ！できませんでした', style: TextStyle(fontSize: 16)),
+              const Text('再度撮影してみてください', style: TextStyle(fontSize: 16)),
+            ],
+          ),
+        )),
+      ),
+    );
+  }
+}
+
+class _SuccessDialog extends HookConsumerWidget {
+  const _SuccessDialog();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final success = ref.watch(_successEventProvider);
+    useEffect(() {
+      if (!success) return () {};
+
+      final timer = Timer(const Duration(milliseconds: 3000), () {
+        ref.read(_successEventProvider.notifier).update((state) => false);
+        ref.read(appRouterProvider).go('/goupon');
+      });
+
+      return timer.cancel;
+    }, [success]);
+
+    return AnimatedOpacity(
+      opacity: success ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 100),
+      child: Container(
+        width: 287,
+        height: 142,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+        ),
+        child: const Center(
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: Column(
+            children: [
+              Text(
+                'ぐーぽんっ！',
+                style: TextStyle(fontSize: 40),
+              )
+            ],
+          ),
+        )),
       ),
     );
   }

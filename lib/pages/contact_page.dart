@@ -56,12 +56,17 @@ class ContactPage extends HookConsumerWidget {
     final controller = ref.watch(cameraControllerProvider);
 
     return WillPopScope(
-      onWillPop: Platform.isIOS
-          ? null
-          : () async {
+      onWillPop: kIsWeb
+          ? () async {
               ref.read(appRouterProvider).go('/guide_home');
               return false;
-            },
+            }
+          : Platform.isIOS
+              ? null
+              : () async {
+                  ref.read(appRouterProvider).go('/guide_home');
+                  return false;
+                },
       child: Scaffold(
         backgroundColor: backgroundColor,
         body: controller.when(

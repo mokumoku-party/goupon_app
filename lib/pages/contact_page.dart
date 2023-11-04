@@ -51,61 +51,67 @@ class ContactPage extends HookConsumerWidget {
           direction: kIsWeb ? Axis.vertical : Axis.horizontal,
           children: [
             CameraPreview(data),
-            Center(
-              child: IconButton(
-                onPressed: () async {
-                  final file = await data.takePicture();
+            Flexible(
+              child: Center(
+                child: IconButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    fixedSize: const Size(128, 128),
+                    shape: const CircleBorder(),
+                  ),
+                  onPressed: () async {
+                    final file = await data.takePicture();
 
-                  if (!kIsWeb) {
-                    final directory = await getExternalStorageDirectory();
-                    if (directory == null) return;
-                  }
+                    if (!kIsWeb) {
+                      final directory = await getExternalStorageDirectory();
+                      if (directory == null) return;
+                    }
 
-                  // 端末に画像保存
-                  final buffer = await file.readAsBytes();
+                    // 端末に画像保存
+                    final buffer = await file.readAsBytes();
+                    if (!kIsWeb) {
+                      final result = await ImageGallerySaver.saveImage(
+                        buffer,
+                        name: file.name,
+                      );
+                      print(result);
+                    }
 
-                  if (!kIsWeb) {
-                    final result = await ImageGallerySaver.saveImage(
-                      buffer,
-                      name: file.name,
+                    // 判定APIに投げる
+                    const url = 'http://35.77.199.18/check_gou_touch';
+
+                    final formData = FormData.fromMap({
+                      'upload_file': MultipartFile.fromBytes(
+                        buffer,
+                        filename: 'hoge.png',
+                        contentType: MediaType.parse('image/png'),
+                      ),
+                    });
+                    print('start upload');
+                    final response = await dio.post(
+                      url,
+                      data: formData,
+                      options: Options(
+                        headers: {
+                          'accept': 'application/json',
+                        },
+                        contentType: 'multipart/form-data',
+                      ),
+                      onSendProgress: (count, total) =>
+                          print('s: $count /  $total'),
+                      onReceiveProgress: (count, total) =>
+                          print('r: $count / $total'),
                     );
-                    print(result);
-                  }
+                    print('complete');
+                    final success = response.data as bool;
 
-                  // 判定APIに投げる
-                  const url = 'http://35.77.199.18/check_gou_touch';
-
-                  final formData = FormData.fromMap({
-                    'upload_file': MultipartFile.fromBytes(
-                      buffer,
-                      filename: 'hoge.png',
-                      contentType: MediaType.parse('image/png'),
-                    ),
-                  });
-                  print('start upload');
-                  final response = await dio.post(
-                    url,
-                    data: formData,
-                    options: Options(
-                      headers: {
-                        'accept': 'application/json',
-                      },
-                      contentType: 'multipart/form-data',
-                    ),
-                    onSendProgress: (count, total) =>
-                        print('s: $count /  $total'),
-                    onReceiveProgress: (count, total) =>
-                        print('r: $count / $total'),
-                  );
-                  print('complete');
-                  final success = response.data as bool;
-
-                  return;
-                },
-                icon: SvgPicture.asset(
-                  'assets/icons/icon-thumbs-up.svg',
-                  width: 80,
-                  height: 80,
+                    return;
+                  },
+                  icon: SvgPicture.asset(
+                    'assets/icons/icon-thumbs-up.svg',
+                    width: 80,
+                    height: 80,
+                  ),
                 ),
               ),
             ),

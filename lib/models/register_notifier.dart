@@ -1,5 +1,6 @@
 import 'package:app/data/register_state.dart';
 import 'package:app/data/user_type.dart';
+import 'package:app/models/personal_notifier.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -38,5 +39,7 @@ class RegisterNotifier extends Notifier<RegisterState> {
     await pref.setString('name', state.name);
     await pref.setString('type', state.type.toString());
     await pref.setString('uuid', uuid);
+
+    ref.read(personalProvider.notifier).build();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:app/pages/guide_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/map_page.dart';
+import 'package:app/pages/result_page.dart';
 import 'package:app/pages/scaffold_with_navbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -62,7 +63,13 @@ final appRouterProvider = Provider(
       GoRoute(
         path: '/map',
         builder: (context, state) => const MapPage(),
-      )
+      ),
+      GoRoute(
+        path: '/result',
+        builder: (context, state) {
+          return const ResultPage();
+        },
+      ),
     ],
   ),
 );

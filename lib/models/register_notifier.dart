@@ -56,10 +56,8 @@ class RegisterNotifier extends Notifier<RegisterState> {
     );
 
     final pref = await SharedPreferences.getInstance();
-    await pref.setString('name', state.name);
-    await pref.setString('type', state.type.toString());
     await pref.setString('uuid', uuid);
 
-    ref.read(personalProvider.notifier).build();
+    await ref.read(personalProvider.notifier).fetch();
   }
 }

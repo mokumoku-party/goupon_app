@@ -19,6 +19,8 @@ mixin _$PersonalState {
   UserType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get uuid => throw _privateConstructorUsedError;
+  String? get nickname => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $PersonalStateCopyWith<PersonalState> get copyWith =>
@@ -31,7 +33,12 @@ abstract class $PersonalStateCopyWith<$Res> {
           PersonalState value, $Res Function(PersonalState) then) =
       _$PersonalStateCopyWithImpl<$Res, PersonalState>;
   @useResult
-  $Res call({UserType type, String name, String uuid});
+  $Res call(
+      {UserType type,
+      String name,
+      String uuid,
+      String? nickname,
+      String? description});
 }
 
 /// @nodoc
@@ -50,6 +57,8 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
     Object? type = null,
     Object? name = null,
     Object? uuid = null,
+    Object? nickname = freezed,
+    Object? description = freezed,
   }) {
     return _then(_value.copyWith(
       type: null == type
@@ -64,6 +73,14 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
               as String,
+      nickname: freezed == nickname
+          ? _value.nickname
+          : nickname // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -76,7 +93,12 @@ abstract class _$$PersonalStateImplCopyWith<$Res>
       __$$PersonalStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UserType type, String name, String uuid});
+  $Res call(
+      {UserType type,
+      String name,
+      String uuid,
+      String? nickname,
+      String? description});
 }
 
 /// @nodoc
@@ -93,6 +115,8 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
     Object? type = null,
     Object? name = null,
     Object? uuid = null,
+    Object? nickname = freezed,
+    Object? description = freezed,
   }) {
     return _then(_$PersonalStateImpl(
       type: null == type
@@ -107,6 +131,14 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
               as String,
+      nickname: freezed == nickname
+          ? _value.nickname
+          : nickname // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -115,7 +147,11 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
 
 class _$PersonalStateImpl extends _PersonalState {
   _$PersonalStateImpl(
-      {this.type = UserType.none, this.name = '', this.uuid = ''})
+      {this.type = UserType.none,
+      this.name = '',
+      this.uuid = '',
+      this.nickname,
+      this.description})
       : super._();
 
   @override
@@ -127,10 +163,14 @@ class _$PersonalStateImpl extends _PersonalState {
   @override
   @JsonKey()
   final String uuid;
+  @override
+  final String? nickname;
+  @override
+  final String? description;
 
   @override
   String toString() {
-    return 'PersonalState(type: $type, name: $name, uuid: $uuid)';
+    return 'PersonalState(type: $type, name: $name, uuid: $uuid, nickname: $nickname, description: $description)';
   }
 
   @override
@@ -140,11 +180,16 @@ class _$PersonalStateImpl extends _PersonalState {
             other is _$PersonalStateImpl &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.uuid, uuid) || other.uuid == uuid));
+            (identical(other.uuid, uuid) || other.uuid == uuid) &&
+            (identical(other.nickname, nickname) ||
+                other.nickname == nickname) &&
+            (identical(other.description, description) ||
+                other.description == description));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, type, name, uuid);
+  int get hashCode =>
+      Object.hash(runtimeType, type, name, uuid, nickname, description);
 
   @JsonKey(ignore: true)
   @override
@@ -157,7 +202,9 @@ abstract class _PersonalState extends PersonalState {
   factory _PersonalState(
       {final UserType type,
       final String name,
-      final String uuid}) = _$PersonalStateImpl;
+      final String uuid,
+      final String? nickname,
+      final String? description}) = _$PersonalStateImpl;
   _PersonalState._() : super._();
 
   @override
@@ -166,6 +213,10 @@ abstract class _PersonalState extends PersonalState {
   String get name;
   @override
   String get uuid;
+  @override
+  String? get nickname;
+  @override
+  String? get description;
   @override
   @JsonKey(ignore: true)
   _$$PersonalStateImplCopyWith<_$PersonalStateImpl> get copyWith =>

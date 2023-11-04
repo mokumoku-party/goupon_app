@@ -10,18 +10,16 @@ import 'package:app/pages/register/register_profile_page.dart';
 import 'package:app/pages/register/register_type_page.dart';
 import 'package:app/pages/result_page.dart';
 import 'package:app/pages/scaffold_with_navbar.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final appRouterProvider = Provider((ref) {
+  final isLogin =
+      ref.watch(personalProvider.select((value) => value.isLoggedIn));
+
   return GoRouter(
-      initialLocation: ref.watch(personalProvider).map(
-            data: (data) => data.value.isLoggedIn ? '/home' : '/register_type',
-            error: (_) => '/loading',
-            loading: (_) => '/loading',
-          ),
+      initialLocation: '/home',
       routes: [
         GoRoute(
           path: '/loading',
@@ -125,6 +123,11 @@ final appRouterProvider = Provider((ref) {
           ]);
         }
 
-        return;
+        final isResister = state.fullPath?.contains('register') ?? false;
+        if (!isLogin && !isResister) {
+          return '/register_type';
+        }
+
+        return null;
       });
 });

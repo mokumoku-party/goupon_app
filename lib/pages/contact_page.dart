@@ -122,7 +122,7 @@ class ContactPage extends HookConsumerWidget {
                       }
 
                       // 判定APIに投げる
-                      const url = 'http://35.77.199.18/check_gou_touch';
+                      const url = 'https://goupon.dicenull.com/check_gou_touch';
 
                       final time = DateTime.now().millisecondsSinceEpoch;
 
@@ -283,7 +283,7 @@ class _SuccessDialog extends HookConsumerWidget {
 
       final timer = Timer(const Duration(milliseconds: 3000), () {
         ref.read(_successEventProvider.notifier).update((state) => false);
-        ref.read(appRouterProvider).go('/guide_home/goupon');
+        ref.read(appRouterProvider).go('/guide_home/result');
       });
 
       return timer.cancel;

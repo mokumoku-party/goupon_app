@@ -1,20 +1,21 @@
 import 'dart:async';
 
+import 'package:app/routes/app_router.dart';
 import 'package:app/widget_marker.dart';
 import 'package:app/widget_marker_google_map.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class MapPage extends HookConsumerWidget {
-  const MapPage({super.key});
-
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high, //正確性:highはAndroid(0-100m),iOS(10m)
     distanceFilter: 1,
   );
+
+  const MapPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -164,7 +165,7 @@ class MapPage extends HookConsumerWidget {
                             ),
                             child: const Text('合流した！'),
                             onPressed: () {
-                              Navigator.pop(context);
+                              ref.read(appRouterProvider).go('/contact');
                             },
                           ),
                         ],

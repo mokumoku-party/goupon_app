@@ -5,13 +5,13 @@ part 'personal_state.freezed.dart';
 
 @freezed
 class PersonalState with _$PersonalState {
-  PersonalState._();
-
   factory PersonalState({
     @Default(UserType.none) UserType type,
     @Default('') String name,
     @Default('') String uuid,
   }) = _PersonalState;
+
+  PersonalState._();
 
   bool get isLoggedIn => !type.isNone && name.isNotEmpty && uuid.isNotEmpty;
 }

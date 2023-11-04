@@ -1,1 +1,1 @@
--keep class com.example.flutter_template.BuildConfig { *; }
+-keep class dev.kani.goupon.BuildConfig { *; }

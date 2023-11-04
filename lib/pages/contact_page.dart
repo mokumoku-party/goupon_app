@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:app/app.dart';
 import 'package:app/routes/app_router.dart';
@@ -54,129 +55,137 @@ class ContactPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(cameraControllerProvider);
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: controller.when(
-        data: (data) => Flex(
-          direction: kIsWeb ? Axis.vertical : Axis.horizontal,
-          children: [
-            Stack(
-              children: [
-                CameraPreview(data),
-                const Positioned.fill(
-                  child: Center(
-                    child: _LoadingIndicator(),
+    return WillPopScope(
+      onWillPop: Platform.isIOS
+          ? null
+          : () async {
+              ref.read(appRouterProvider).go('/guide_home');
+              return false;
+            },
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        body: controller.when(
+          data: (data) => Flex(
+            direction: kIsWeb ? Axis.vertical : Axis.horizontal,
+            children: [
+              Stack(
+                children: [
+                  CameraPreview(data),
+                  const Positioned.fill(
+                    child: Center(
+                      child: _LoadingIndicator(),
+                    ),
                   ),
-                ),
-                const Positioned.fill(
-                  child: Center(
-                    child: _SuccessDialog(),
+                  const Positioned.fill(
+                    child: Center(
+                      child: _SuccessDialog(),
+                    ),
                   ),
-                ),
-                const Positioned.fill(
-                  child: Center(
-                    child: _RetryDialog(),
+                  const Positioned.fill(
+                    child: Center(
+                      child: _RetryDialog(),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Flexible(
-              child: Center(
-                child: IconButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    fixedSize: const Size(128, 128),
-                    shape: const CircleBorder(),
-                  ),
-                  onPressed: () async {
-                    if (ref.read(_isLoadingProvider)) {
-                      return;
-                    }
+                ],
+              ),
+              Flexible(
+                child: Center(
+                  child: IconButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      fixedSize: const Size(128, 128),
+                      shape: const CircleBorder(),
+                    ),
+                    onPressed: () async {
+                      if (ref.read(_isLoadingProvider)) {
+                        return;
+                      }
 
-                    ref
-                        .read(_isLoadingProvider.notifier)
-                        .update((state) => true);
-                    final file = await data.takePicture();
+                      ref
+                          .read(_isLoadingProvider.notifier)
+                          .update((state) => true);
+                      final file = await data.takePicture();
 
-                    if (!kIsWeb) {
-                      final directory = await getExternalStorageDirectory();
-                      if (directory == null) return;
-                    }
+                      if (!kIsWeb) {
+                        final directory = await getExternalStorageDirectory();
+                        if (directory == null) return;
+                      }
 
-                    // 端末に画像保存
-                    final buffer = await file.readAsBytes();
-                    if (!kIsWeb) {
-                      final result = await ImageGallerySaver.saveImage(
-                        buffer,
-                        name: file.name,
-                      );
-                      print(result);
-                    }
+                      // 端末に画像保存
+                      final buffer = await file.readAsBytes();
+                      if (!kIsWeb) {
+                        final result = await ImageGallerySaver.saveImage(
+                          buffer,
+                          name: file.name,
+                        );
+                        print(result);
+                      }
 
-                    // 判定APIに投げる
-                    const url = 'http://35.77.199.18/check_gou_touch';
+                      // 判定APIに投げる
+                      const url = 'http://35.77.199.18/check_gou_touch';
 
-                    final time = DateTime.now().millisecondsSinceEpoch;
+                      final time = DateTime.now().millisecondsSinceEpoch;
 
-                    final formData = FormData.fromMap({
-                      'upload_file': MultipartFile.fromBytes(
-                        buffer,
-                        filename: 'contact_$time.png',
-                        contentType: MediaType.parse('image/png'),
-                      ),
-                    });
-                    final response = await dio.post(
-                      url,
-                      data: formData,
-                      options: Options(
-                        headers: {
-                          'accept': 'application/json',
+                      final formData = FormData.fromMap({
+                        'upload_file': MultipartFile.fromBytes(
+                          buffer,
+                          filename: 'contact_$time.png',
+                          contentType: MediaType.parse('image/png'),
+                        ),
+                      });
+                      final response = await dio.post(
+                        url,
+                        data: formData,
+                        options: Options(
+                          headers: {
+                            'accept': 'application/json',
+                          },
+                          contentType: 'multipart/form-data',
+                        ),
+                        onSendProgress: (count, total) {
+                          ref.read(_progressSndProvider.notifier).state =
+                              count.toDouble() / total.toDouble();
+                          print('s: $count /  $total');
                         },
-                        contentType: 'multipart/form-data',
-                      ),
-                      onSendProgress: (count, total) {
-                        ref.read(_progressSndProvider.notifier).state =
-                            count.toDouble() / total.toDouble();
-                        print('s: $count /  $total');
-                      },
-                      onReceiveProgress: (count, total) {
-                        ref.read(_progressRcvProvider.notifier).state =
-                            count.toDouble() / total.toDouble();
-                        print('r: $count / $total');
-                      },
-                    );
+                        onReceiveProgress: (count, total) {
+                          ref.read(_progressRcvProvider.notifier).state =
+                              count.toDouble() / total.toDouble();
+                          print('r: $count / $total');
+                        },
+                      );
 
-                    final success = response.data as bool;
+                      final success = response.data as bool;
 
-                    ref
-                        .read(_retryEventProvider.notifier)
-                        .update((_) => !success);
-                    ref
-                        .read(_successEventProvider.notifier)
-                        .update((_) => success);
+                      ref
+                          .read(_retryEventProvider.notifier)
+                          .update((_) => !success);
+                      ref
+                          .read(_successEventProvider.notifier)
+                          .update((_) => success);
 
-                    print('complete $success');
-                    ref
-                        .read(_isLoadingProvider.notifier)
-                        .update((state) => false);
-                    ref.read(_progressRcvProvider.notifier).state = 0;
-                    ref.read(_progressSndProvider.notifier).state = 0;
+                      print('complete $success');
+                      ref
+                          .read(_isLoadingProvider.notifier)
+                          .update((state) => false);
+                      ref.read(_progressRcvProvider.notifier).state = 0;
+                      ref.read(_progressSndProvider.notifier).state = 0;
 
-                    return;
-                  },
-                  icon: SvgPicture.asset(
-                    'assets/icons/icon-thumbs-up.svg',
-                    width: 80,
-                    height: 80,
+                      return;
+                    },
+                    icon: SvgPicture.asset(
+                      'assets/icons/icon-thumbs-up.svg',
+                      width: 80,
+                      height: 80,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        error: (err, stack) => Text('Error: $err'),
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
+            ],
+          ),
+          error: (err, stack) => Text('Error: $err'),
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
         ),
       ),
     );

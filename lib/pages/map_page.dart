@@ -166,7 +166,7 @@ class MapPage extends HookConsumerWidget {
                             ),
                             child: const Text('合流した！'),
                             onPressed: () {
-                              ref.read(appRouterProvider).go('/contact');
+                              ref.read(appRouterProvider).go('/guide_home');
                             },
                           ),
                         ],

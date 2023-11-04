@@ -3,6 +3,7 @@ import 'package:app/pages/goupon_page.dart';
 import 'package:app/pages/guide_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/map_page.dart';
+import 'package:app/pages/register/register_profile_page.dart';
 import 'package:app/pages/register/register_type_page.dart';
 import 'package:app/pages/result_page.dart';
 import 'package:app/pages/scaffold_with_navbar.dart';
@@ -14,10 +15,6 @@ final appRouterProvider = Provider(
   (ref) => GoRouter(
       initialLocation: '/register_type',
       routes: [
-        GoRoute(
-          path: '/register_type',
-          builder: (context, state) => RegisterTypePage(),
-        ),
         StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) =>
               ScaffoldWithNavbar(navigationShell),
@@ -65,9 +62,17 @@ final appRouterProvider = Provider(
           ],
         ),
         GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomePage(),
+          path: '/register_type',
+          builder: (context, state) => const RegisterTypePage(),
         ),
+        GoRoute(
+          path: '/register_profile',
+          builder: (context, state) => const RegisterProfilePage(),
+        ),
+        // GoRoute(
+        //   path: '/home',
+        //   builder: (context, state) => const HomePage(),
+        // ),
         GoRoute(
           path: '/map',
           builder: (context, state) => const MapPage(),

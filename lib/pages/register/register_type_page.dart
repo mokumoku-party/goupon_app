@@ -1,6 +1,9 @@
 import 'package:app/app.dart';
+import 'package:app/data/user_type.dart';
+import 'package:app/models/register_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart' as svgp;
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RegisterTypePage extends HookConsumerWidget {
@@ -8,6 +11,9 @@ class RegisterTypePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedType =
+        ref.watch(registerNotifier.select((state) => state.type));
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -39,14 +45,25 @@ class RegisterTypePage extends HookConsumerWidget {
           SizedBox(
             width: 228,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                if (selectedType.isNone) return;
+
+                context.push('/register_profile');
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                shape: const StadiumBorder(),
+                backgroundColor:
+                    selectedType.isNone ? backgroundColor : primaryColor,
+                surfaceTintColor: Colors.transparent,
+                shape: const StadiumBorder(
+                  side: BorderSide(color: primaryColor, width: 2),
+                ),
               ),
-              child: const Text(
+              child: Text(
                 '次へ',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: selectedType.isNone ? primaryColor : Colors.white,
+                ),
               ),
             ),
           ),
@@ -61,34 +78,14 @@ class _GuideOrTraveller extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedType =
+        ref.watch(registerNotifier.select((state) => state.type));
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/person_filled.svg',
-                width: 80,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '案内人',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: subSubColor,
-                ),
-              )
-            ],
-          ),
-        ),
+        _TypeCard(UserType.guide, isSelected: selectedType.isGuide),
         const SizedBox(width: 24),
         const Text(
           'or',
@@ -99,31 +96,63 @@ class _GuideOrTraveller extends HookConsumerWidget {
           ),
         ),
         const SizedBox(width: 24),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/person_filled.svg',
-                width: 80,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '旅人',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: subSubColor,
-                ),
-              )
-            ],
-          ),
-        ),
+        _TypeCard(UserType.traveller, isSelected: selectedType.isTraveller)
       ],
+    );
+  }
+}
+
+class _TypeCard extends HookConsumerWidget {
+  final UserType type;
+  final bool isSelected;
+  const _TypeCard(
+    this.type, {
+    this.isSelected = false,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return InkWell(
+      onTap: () {
+        ref.read(registerNotifier.notifier).setType(type);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: subSubColor,
+                border: isSelected
+                    ? Border.all(color: primaryColor, width: 4)
+                    : null,
+                image: const DecorationImage(
+                  image: svgp.Svg(
+                    'assets/icons/person_filled.svg',
+                    size: Size(80, 80),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              type.isTraveller ? '旅人' : '案内人',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? primaryColor : subSubColor,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

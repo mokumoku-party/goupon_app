@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -101,9 +102,10 @@ class ContactPage extends HookConsumerWidget {
 
                   return;
                 },
-                icon: const Icon(
-                  Icons.circle,
-                  size: 128,
+                icon: SvgPicture.asset(
+                  'assets/icons/icon-thumbs-up.svg',
+                  width: 80,
+                  height: 80,
                 ),
               ),
             ),

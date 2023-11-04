@@ -163,6 +163,10 @@ class GuidePage extends HookConsumerWidget {
                                     child: const Text('依頼する'),
                                     onPressed: () {
                                       Navigator.pop(context);
+                                      ref
+                                          .read(personalProvider.notifier)
+                                          .setGuide(
+                                              guides.value?[index]['uuid']);
                                       ref.read(appRouterProvider).go(
                                             '/guide/map',
                                             extra: PersonalState(

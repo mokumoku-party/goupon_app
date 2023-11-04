@@ -24,6 +24,7 @@ class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statePosition = useState<Position?>(null);
+    final showConsentDialogFlag = useState<bool>(false);
     // final guidePosition =
     //     useState<LatLng>(const LatLng(35.5583744, 139.7555427));
     // final distance = useState<double>(0);
@@ -31,6 +32,40 @@ class HomePage extends HookConsumerWidget {
     final personalNotifier = ref.watch(personalProvider.notifier);
 
     useEffect(() {
+      void poleTraveler(Timer timer) {
+        Future(() async {
+          final travelers = await personalNotifier.getTraveler();
+          if (travelers.isNotEmpty &&
+              context.mounted &&
+              !showConsentDialogFlag.value) {
+            showConsentDialogFlag.value = true;
+            // ignore: use_build_context_synchronously
+            showDialog(
+              context: context,
+              builder: (context) {
+                return SimpleDialog(
+                  children: [
+                    const SizedBox(height: 32),
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: AssetImage('assets/imgs/kani.png'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 32),
+                  ],
+                );
+              },
+            );
+          }
+        });
+      }
+
+      final timer = Timer.periodic(const Duration(seconds: 2), poleTraveler);
       StreamSubscription<Position>? positionStream;
       Future(() async {
         LocationPermission permission = await Geolocator.checkPermission();
@@ -59,7 +94,10 @@ class HomePage extends HookConsumerWidget {
               : '${position.latitude.toString()}, ${position.longitude.toString()}');
         });
       });
-      return positionStream?.cancel;
+      return () {
+        positionStream?.cancel();
+        timer.cancel();
+      };
     }, const []);
 
     return Scaffold(

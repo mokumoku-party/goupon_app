@@ -11,6 +11,7 @@ environment:
 dependencies:
   camera: ^0.10.5+5
   dio: ^5.3.3
+  dotlottie_loader: ^0.0.3
   flutter:
     sdk: flutter
   flutter_config: ^2.0.2
@@ -22,6 +23,7 @@ dependencies:
   google_maps_flutter: ^2.5.0
   hooks_riverpod: ^2.0.2
   image_gallery_saver: ^2.0.3
+  lottie: ^2.7.0
   path_provider: ^2.1.1
   supabase_flutter: ^1.10.24
 

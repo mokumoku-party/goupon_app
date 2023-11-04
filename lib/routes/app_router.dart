@@ -1,4 +1,5 @@
 import 'package:app/pages/contact_page.dart';
+import 'package:app/pages/goupon_page.dart';
 import 'package:app/pages/guide_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/map_page.dart';
@@ -71,11 +72,15 @@ final appRouterProvider = Provider(
           builder: (context, state) => const ContactPage(),
         ),
         GoRoute(
+          path: '/goupon',
+          builder: (context, state) => const GouponPage(),
+        ),
+        GoRoute(
           path: '/result',
           builder: (context, state) {
             return const ResultPage();
           },
-        ),
+        )
       ],
       redirect: (context, state) {
         // コンタクトページだけ横固定

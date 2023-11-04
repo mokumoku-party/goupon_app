@@ -1,3 +1,4 @@
+import 'package:app/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -20,8 +21,8 @@ class ResultPage extends HookConsumerWidget {
       body: Container(
         child: Column(
           children: [
-            Text('🎉🎉 当たり 🎉🎉'),
-            Text('クーポンゲット！'),
+            const Text('🎉🎉 当たり 🎉🎉'),
+            const Text('クーポンゲット！'),
             Container(
               decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(40)),
@@ -37,7 +38,7 @@ class ResultPage extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  Column(
+                  const Column(
                     children: [
                       Text('【クーポンの名前】'),
                       Text('使える店名'),
@@ -58,7 +59,7 @@ class ResultPage extends HookConsumerWidget {
               ),
               child: const Text('ホームに戻る'),
               onPressed: () {
-                Navigator.pop(context);
+                ref.read(appRouterProvider).go('/home');
               },
             ),
           ],

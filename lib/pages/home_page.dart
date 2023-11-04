@@ -15,12 +15,17 @@ class HomePage extends HookConsumerWidget {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: backgroundColor,
-        title: const Text(
-          'ぐーぽんっ！',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: textColor,
+        title: GestureDetector(
+          onTap: () {
+            ref.read(appRouterProvider).go('/goupon');
+          },
+          child: const Text(
+            'ぐーぽんっ！',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
         ),
       ),

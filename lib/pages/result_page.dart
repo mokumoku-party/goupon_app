@@ -33,10 +33,11 @@ class ResultPage extends HookConsumerWidget {
           animation: animation,
           builder: (context, child) {
             return Container(
-                color: animation.value,
-                child: ref.watch(completeGoupon)
-                    ? const _Result()
-                    : _Goupon(controller));
+              color: animation.value,
+              child: ref.watch(completeGoupon)
+                  ? const _Result()
+                  : _Goupon(controller),
+            );
           },
         ),
       ),

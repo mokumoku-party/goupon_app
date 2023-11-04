@@ -1,4 +1,5 @@
 import 'package:app/pages/contact_page.dart';
+import 'package:app/pages/goupon_page.dart';
 import 'package:app/pages/guide_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/map_page.dart';
@@ -68,6 +69,10 @@ final appRouterProvider = Provider(
         GoRoute(
           path: '/contact',
           builder: (context, state) => const ContactPage(),
+        ),
+        GoRoute(
+          path: '/goupon',
+          builder: (context, state) => const GouponPage(),
         ),
       ],
       redirect: (context, state) {

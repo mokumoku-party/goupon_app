@@ -59296,7 +59296,7 @@ i=A.bm9("multipart/form-data",A.Y(["accept","application/json"],m,k))
 i.a="POST"
 e=A
 s=5
-return A.u(n.Sx(0,"http://35.77.199.18/check_gou_touch",null,j,new A.aiU(g),new A.aiV(g),i,null,k),$async$$0)
+return A.u(n.Sx(0,"https://goupon.dicenull.com/check_gou_touch",null,j,new A.aiU(g),new A.aiV(g),i,null,k),$async$$0)
 case 5:h=e.mX(b.a)
 n=g.en(0,$.aWN().gjs(),o)
 m=J.ak(n)

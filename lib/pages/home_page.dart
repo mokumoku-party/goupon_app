@@ -5,6 +5,7 @@ import 'package:app/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -16,8 +17,15 @@ class HomePage extends HookConsumerWidget {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         title: GestureDetector(
-          onTap: () {
-            ref.read(appRouterProvider).go('/goupon');
+          onTap: () async {
+            final pref = await SharedPreferences.getInstance();
+            await pref.clear();
+
+            const snackBar = SnackBar(
+              content: Text("ユーザー情報を削除しました"),
+            );
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           },
           child: const Text(
             'ぐーぽんっ！',

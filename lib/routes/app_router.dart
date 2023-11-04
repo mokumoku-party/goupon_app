@@ -1,18 +1,30 @@
+import 'package:app/models/personal_notifier.dart';
 import 'package:app/pages/contact_page.dart';
 import 'package:app/pages/goupon_page.dart';
 import 'package:app/pages/guide_page.dart';
 import 'package:app/pages/home_page.dart';
+import 'package:app/pages/loading_page.dart';
 import 'package:app/pages/map_page.dart';
+import 'package:app/pages/register/register_profile_page.dart';
+import 'package:app/pages/register/register_type_page.dart';
 import 'package:app/pages/result_page.dart';
 import 'package:app/pages/scaffold_with_navbar.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final appRouterProvider = Provider(
-  (ref) => GoRouter(
-      initialLocation: '/home',
+final appRouterProvider = Provider((ref) {
+  return GoRouter(
+      initialLocation: ref.watch(personalProvider).map(
+            data: (data) => data.value.isLoggedIn ? '/home' : '/register_type',
+            error: (_) => '/loading',
+            loading: (_) => '/loading',
+          ),
       routes: [
+        GoRoute(
+          path: '/loading',
+          builder: (context, state) => const LoadingPage(),
+        ),
         StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) =>
               ScaffoldWithNavbar(navigationShell),
@@ -60,8 +72,12 @@ final appRouterProvider = Provider(
           ],
         ),
         GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomePage(),
+          path: '/register_type',
+          builder: (context, state) => const RegisterTypePage(),
+        ),
+        GoRoute(
+          path: '/register_profile',
+          builder: (context, state) => const RegisterProfilePage(),
         ),
         GoRoute(
           path: '/map',
@@ -100,5 +116,5 @@ final appRouterProvider = Provider(
         }
 
         return;
-      }),
-);
+      });
+});

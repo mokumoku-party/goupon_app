@@ -10,6 +10,7 @@ environment:
 
 dependencies:
   camera: ^0.10.5+5
+  camera_web: ^0.3.2+3
   dio: ^5.3.3
   dotlottie_loader: ^0.0.3
   flutter:

@@ -154,7 +154,7 @@ packages:
     source: hosted
     version: "2.6.0"
   camera_web:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: camera_web
       sha256: d4c2c571c7af04f8b10702ca16bb9ed2a26e64534171e8f75c9349b2c004d8f1

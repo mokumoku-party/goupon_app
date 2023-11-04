@@ -28,7 +28,7 @@ final appRouterProvider = Provider(
               GoRoute(
                 path: '/guide',
                 builder: (context, state) {
-                  return const HomePage();
+                  return const MapPage();
                 },
               ),
             ],

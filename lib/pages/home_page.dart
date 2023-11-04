@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:app/app.dart';
 import 'package:app/models/personal_notifier.dart';
@@ -9,17 +10,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends HookConsumerWidget {
-  const HomePage({super.key});
-
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high, //正確性:highはAndroid(0-100m),iOS(10m)
     distanceFilter: 1,
   );
+
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -127,7 +128,6 @@ class HomePage extends HookConsumerWidget {
           onTap: () async {
             ref.read(appRouterProvider).go('/guide_home/result');
             return;
-
             final pref = await SharedPreferences.getInstance();
             await pref.clear();
 
@@ -240,39 +240,7 @@ class HomePage extends HookConsumerWidget {
             ),
           ),
           SliverToBoxAdapter(
-            child: SizedBox(
-              height: 160,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: 84 + 16,
-                    padding: EdgeInsets.only(left: 16),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/imgs/kani.png',
-                          width: 84,
-                          height: 84,
-                        ),
-                        const SizedBox(height: 8),
-                        Flexible(
-                          child: Text(
-                            '大田区名物のかに',
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                },
-                itemCount: 10,
-              ),
-            ),
+            child: _SeelList(),
           ),
         ],
       ),
@@ -428,6 +396,62 @@ class _ProfileCard extends HookConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SeelList extends HookConsumerWidget {
+  const _SeelList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final stickerUrl = useState<List<String>>([]);
+
+    useEffect(() {
+      Future.microtask(() async {
+        final client = Supabase.instance.client;
+
+        final uuid = ref.read(personalProvider).uuid;
+        final seels = await client.from('users').select().match({'uuid': uuid});
+        final idData = List<Map<String, dynamic>>.from(seels).first['stickers'];
+
+        final currentList =
+            List<String>.from(const JsonDecoder().convert(idData ?? '[]'))
+                .map((e) => int.parse(e));
+
+        final stickers = await client.from('sticker').select<PostgrestList>();
+        final seelUrlList = List<Map<String, dynamic>>.from(stickers);
+        stickerUrl.value = List<String>.from(seelUrlList
+            .where((e) => currentList.contains(e['id']))
+            .map((e) => e['sticker_img_url']));
+      });
+      return null;
+    }, []);
+
+    return SizedBox(
+      height: 160,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        reverse: true,
+        itemBuilder: (context, index) {
+          final data = stickerUrl.value[index];
+
+          return Container(
+            width: 84 + 16,
+            padding: EdgeInsets.only(left: 16),
+            child: Container(
+              width: 84,
+              height: 84,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(data),
+                ),
+              ),
+            ),
+          );
+        },
+        itemCount: stickerUrl.value.length,
       ),
     );
   }

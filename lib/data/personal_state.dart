@@ -16,6 +16,7 @@ class PersonalState with _$PersonalState {
     String? nickname,
     String? description,
     @Default([]) List<int> stickers,
+    @Default(false) bool isLoading,
   }) = _PersonalState;
 
   PersonalState._();

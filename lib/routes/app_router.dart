@@ -18,6 +18,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 final appRouterProvider = Provider((ref) {
   final isLogin =
       ref.watch(personalProvider.select((value) => value.isLoggedIn));
+  final isLoading =
+      ref.watch(personalProvider.select((value) => value.isLoading));
 
   return GoRouter(
       initialLocation: '/home',
@@ -124,6 +126,10 @@ final appRouterProvider = Provider((ref) {
             DeviceOrientation.landscapeLeft,
             DeviceOrientation.landscapeRight,
           ]);
+        }
+
+        if (isLoading) {
+          return '/loading';
         }
 
         final isResister = state.fullPath?.contains('register') ?? false;

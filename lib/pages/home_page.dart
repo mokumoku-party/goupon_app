@@ -7,6 +7,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final isGuideProvider = StateProvider((ref) => false);
+
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
 
@@ -36,6 +38,7 @@ class HomePage extends HookConsumerWidget {
             ),
           ),
         ),
+        actions: [_ToggleButton()],
       ),
       body: CustomScrollView(
         slivers: [
@@ -342,6 +345,68 @@ class _Title extends HookConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [icon, text],
+        ),
+      ),
+    );
+  }
+}
+
+class _ToggleButton extends HookConsumerWidget {
+  const _ToggleButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isGuide = ref.watch(isGuideProvider);
+
+    return GestureDetector(
+      onTap: () {
+        ref.read(isGuideProvider.notifier).update((state) => !state);
+      },
+      child: Container(
+        width: 88,
+        height: 32,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isGuide ? primaryColor : subSubColor),
+              width: 20,
+              height: 20,
+              child: Center(
+                child: Text(
+                  '案',
+                  style: TextStyle(color: Colors.white, height: 1),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            SvgPicture.asset(
+              'assets/icons/icon-double-sided arrow.svg',
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(subSubColor, BlendMode.srcIn),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isGuide ? subSubColor : primaryColor),
+              width: 20,
+              height: 20,
+              child: Center(
+                child: Text(
+                  '旅',
+                  style: TextStyle(color: Colors.white, height: 1),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

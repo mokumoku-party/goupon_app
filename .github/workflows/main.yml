@@ -6,7 +6,6 @@ on:
 
   workflow_dispatch:
 
-
 env:
   SUPABASE_URL: ${{secrets.SUPABASE_URL}}
   SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
@@ -30,14 +29,12 @@ jobs:
       - name: Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.0'
-          channel: 'stable'
+          flutter-version: "3.13.0"
+          channel: "stable"
           cache: true
-      - run: echo '{"SUPABASE_URL":${{secrets.SUPABASE_URL}}, "SUPABASE_KEY":${{secrets.SUPABASE_KEY}}}' >> api_key.json
       - run: flutter --version
       - run: flutter pub get
-      - run: flutter build web --base-href /${{ steps.version.outputs.repository }}/ --dart-define-from-file=api_key.json
-
+      - run: flutter build web --base-href /${{ steps.version.outputs.repository }}/ --dart-define=SUPABASE_KEY=${{secrets.SUPABASE_KEY}} --dart-define=SUPABASE_URL=${{secrects.SUPABASE_URL}}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:

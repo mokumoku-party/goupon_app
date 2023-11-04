@@ -1,11 +1,14 @@
-// ignore: implementation_imports
+import 'dart:typed_data';
+
 import 'package:app/app.dart';
 import 'package:app/models/register_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import 'package:image_picker/image_picker.dart';
 
 class RegisterProfilePage extends HookConsumerWidget {
   const RegisterProfilePage({super.key});
@@ -15,12 +18,21 @@ class RegisterProfilePage extends HookConsumerWidget {
     final controller = useTextEditingController();
     final name = useState('');
     final isRegister = useState(false);
+    final iconFile =
+        ref.watch(registerNotifier.select((state) => state.iconPath));
+    final iconByte = useState<Uint8List?>(null);
 
     useEffect(() {
       controller.addListener(() {
         name.value = controller.text;
       });
     });
+
+    useEffect(() {
+      Future.microtask(() async {
+        iconByte.value = await iconFile?.readAsBytes();
+      });
+    }, [iconFile]);
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -42,27 +54,42 @@ class RegisterProfilePage extends HookConsumerWidget {
           children: [
             const SizedBox(height: 60),
             Center(
-              child: Container(
-                width: 96,
-                height: 96,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: Svg(
-                      'assets/icons/person_filled.svg',
-                      size: Size(96, 96),
-                    ),
-                  ),
+              child: ClipOval(
+                child: SizedBox(
+                  width: 96,
+                  height: 96,
+                  child: iconByte.value == null
+                      ? SvgPicture.asset(
+                          'assets/icons/person_filled.svg',
+                          width: 96,
+                        )
+                      : Image.memory(
+                          iconByte.value!,
+                          width: 96,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
             ),
             const SizedBox(height: 4),
-            const Text(
-              '編集する',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: subSubColor,
+            ElevatedButton(
+              onPressed: () async {
+                final pickedFile = await ImagePicker().pickImage(
+                  source: ImageSource.gallery,
+                  imageQuality: 0,
+                );
+
+                if (pickedFile != null) {
+                  ref.read(registerNotifier.notifier).setIcon(pickedFile);
+                }
+              },
+              child: const Text(
+                '編集する',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: subSubColor,
+                ),
               ),
             ),
             const SizedBox(height: 24),

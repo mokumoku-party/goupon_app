@@ -15,14 +15,6 @@ class RegisterNotifier extends Notifier<RegisterState> {
     return RegisterState();
   }
 
-  void setType(UserType type) {
-    state = state.copyWith(type: type);
-  }
-
-  void setName(String name) {
-    state = state.copyWith(name: name);
-  }
-
   Future<void> insert() async {
     final client = Supabase.instance.client;
 
@@ -36,10 +28,16 @@ class RegisterNotifier extends Notifier<RegisterState> {
     );
 
     final pref = await SharedPreferences.getInstance();
-    await pref.setString('name', state.name);
-    await pref.setString('type', state.type.toString());
     await pref.setString('uuid', uuid);
 
-    ref.read(personalProvider.notifier).build();
+    await ref.read(personalProvider.notifier).fetch();
+  }
+
+  void setName(String name) {
+    state = state.copyWith(name: name);
+  }
+
+  void setType(UserType type) {
+    state = state.copyWith(type: type);
   }
 }

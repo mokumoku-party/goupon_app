@@ -2,27 +2,41 @@ import 'package:app/data/personal_state.dart';
 import 'package:app/data/user_type.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final personalProvider =
     NotifierProvider<PersonalNotifier, PersonalState>(PersonalNotifier.new);
 
 class PersonalNotifier extends Notifier<PersonalState> {
+  final client = Supabase.instance.client;
   @override
   PersonalState build() {
-    init();
+    fetch();
     return PersonalState();
   }
 
-  Future init() async {
+  Future<void> fetch() async {
     final pref = await SharedPreferences.getInstance();
-    final name = pref.getString('name') ?? '';
-    final type = pref.getString('type') ?? '';
-    final uuid = pref.getString('uuid') ?? '';
+    final localUuid = pref.getString('uuid');
+
+    final uuid = (state.uuid.isEmpty) ? localUuid : state.uuid;
+    final result = (await client.from('users').select().match({"uuid": uuid}));
+
+    final user = List<Map<String, dynamic>>.from(result).first;
 
     state = state.copyWith(
-      name: name,
-      type: type.isEmpty ? UserType.none : UserType.values.byName(type),
-      uuid: uuid,
+      uuid: uuid!,
+      name: user['name'],
+      type: UserType.values.byName(user['type']),
     );
+  }
+
+  void toggle() async {
+    await client.from('users').update({'type': state.type.toggle().name}).match(
+      {'uuid': state.uuid},
+    );
+
+    print('${state.type}, ${state.uuid}');
+    fetch();
   }
 }

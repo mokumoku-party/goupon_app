@@ -123,7 +123,8 @@ final appRouterProvider = Provider((ref) {
           ]);
         }
 
-        if (!isLogin) {
+        final isResister = state.fullPath?.contains('register') ?? false;
+        if (!isLogin && !isResister) {
           return '/register_type';
         }
 

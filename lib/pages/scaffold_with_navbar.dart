@@ -4,37 +4,31 @@ import 'package:go_router/go_router.dart';
 class ScaffoldWithNavbar extends StatelessWidget {
   const ScaffoldWithNavbar(this.navigationShell, {super.key});
 
-  /// ブランチ・ナビゲーターのナビゲーション・シェルとコンテナ。
   final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell, // body: navigationShellは、IndexedStackをラップしています。
+      body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
-        // bottomNavigationBar: BottomNavigationBarは、ボトムナビゲーションバーを実装しています。
-        currentIndex: navigationShell
-            .currentIndex, // currentIndex: navigationShell.currentIndexは、現在のインデックスを取得しています。
+        currentIndex: navigationShell.currentIndex,
+        type: BottomNavigationBarType.shifting,
+        selectedItemColor: Colors.amber,
+        unselectedItemColor: Colors.grey,
         items: const [
-          // BottomNavigationBarItemは、ボトムナビゲーションバーのアイテムを実装しています。
-          BottomNavigationBarItem(icon: Icon(Icons.feed), label: 'Feed'),
-          BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Shope'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ホーム'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: '案内'),
+          BottomNavigationBarItem(icon: Icon(Icons.note), label: '記録'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: '設定'),
         ],
         onTap: _onTap,
       ),
     );
   }
 
-  // _onTapメソッドは、ボトムナビゲーションバーのアイテムをタップしたときに、
-  // そのアイテムのインデックスを取得して、そのインデックスに対応するブランチにナビゲートします。
   void _onTap(index) {
     navigationShell.goBranch(
       index,
-      // ボトムナビゲーションバーを使用する際の一般的なパターンは、次のようなものです。
-      // 既にアクティブになっているアイテムをタップしたときに、最初の場所に移動することをサポートすることです。
-      // この例では、この動作をサポートする方法を示します。この例では、この動作をサポートする方法を示します、
-      // goBranchのinitialLocationパラメータを使用します。
       initialLocation: index == navigationShell.currentIndex,
     );
   }

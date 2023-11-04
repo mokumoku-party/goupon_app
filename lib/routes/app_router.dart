@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final appRouterProvider = Provider(
   (ref) => GoRouter(
-    initialLocation: '/tab1',
+    initialLocation: '/home',
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -14,7 +14,7 @@ final appRouterProvider = Provider(
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/tab1',
+                path: '/home',
                 builder: (context, state) {
                   return const HomePage();
                 },
@@ -24,7 +24,7 @@ final appRouterProvider = Provider(
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/tab2',
+                path: '/guide',
                 builder: (context, state) {
                   return const HomePage();
                 },
@@ -34,7 +34,17 @@ final appRouterProvider = Provider(
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/tab3',
+                path: '/logs',
+                builder: (context, state) {
+                  return const HomePage();
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/settings',
                 builder: (context, state) {
                   return const HomePage();
                 },

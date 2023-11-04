@@ -55,7 +55,7 @@ class HomePage extends HookConsumerWidget {
                   Text('案内ランキング'),
                   const SizedBox(width: 8),
                   Text(
-                    'N',
+                    '1',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,

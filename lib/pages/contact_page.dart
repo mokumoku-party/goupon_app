@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:app/app.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
@@ -36,6 +39,8 @@ final cameraControllerProvider =
 });
 
 final dio = Dio();
+final _isLoadingProvider = StateProvider((ref) => false);
+final _retryEventProvider = StateProvider((ref) => false);
 
 class ContactPage extends HookConsumerWidget {
   const ContactPage({super.key});
@@ -50,7 +55,20 @@ class ContactPage extends HookConsumerWidget {
         data: (data) => Flex(
           direction: kIsWeb ? Axis.vertical : Axis.horizontal,
           children: [
-            CameraPreview(data),
+            Stack(
+              children: [
+                CameraPreview(data),
+                const Positioned.fill(
+                  child: Center(
+                    child: _LoadingIndicator(),
+                  ),
+                ),
+                const Positioned.fill(
+                    child: Center(
+                  child: _SuccessDialog(),
+                ))
+              ],
+            ),
             Flexible(
               child: Center(
                 child: IconButton(
@@ -60,6 +78,13 @@ class ContactPage extends HookConsumerWidget {
                     shape: const CircleBorder(),
                   ),
                   onPressed: () async {
+                    if (ref.read(_isLoadingProvider)) {
+                      return;
+                    }
+
+                    ref
+                        .read(_isLoadingProvider.notifier)
+                        .update((state) => true);
                     final file = await data.takePicture();
 
                     if (!kIsWeb) {
@@ -83,11 +108,10 @@ class ContactPage extends HookConsumerWidget {
                     final formData = FormData.fromMap({
                       'upload_file': MultipartFile.fromBytes(
                         buffer,
-                        filename: 'hoge.png',
+                        filename: 'contact.png',
                         contentType: MediaType.parse('image/png'),
                       ),
                     });
-                    print('start upload');
                     final response = await dio.post(
                       url,
                       data: formData,
@@ -102,8 +126,16 @@ class ContactPage extends HookConsumerWidget {
                       onReceiveProgress: (count, total) =>
                           print('r: $count / $total'),
                     );
-                    print('complete');
+
                     final success = response.data as bool;
+
+                    ref
+                        .read(_retryEventProvider.notifier)
+                        .update((_) => !success);
+                    print('complete $success');
+                    ref
+                        .read(_isLoadingProvider.notifier)
+                        .update((state) => false);
 
                     return;
                   },
@@ -121,6 +153,62 @@ class ContactPage extends HookConsumerWidget {
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
+      ),
+    );
+  }
+}
+
+class _LoadingIndicator extends HookConsumerWidget {
+  const _LoadingIndicator();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(_isLoadingProvider);
+
+    return AnimatedOpacity(
+      opacity: isLoading ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 50),
+      child: const CircularProgressIndicator(
+        color: primaryColor,
+      ),
+    );
+  }
+}
+
+class _SuccessDialog extends HookConsumerWidget {
+  const _SuccessDialog();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      final timer = Timer(const Duration(milliseconds: 3000), () {
+        ref.read(_retryEventProvider.notifier).update((state) => false);
+      });
+
+      return timer.cancel;
+    });
+
+    return AnimatedOpacity(
+      opacity: ref.watch(_retryEventProvider) ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 100),
+      child: Container(
+        width: 287,
+        height: 142,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+        ),
+        child: Center(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: Column(
+            children: [
+              SvgPicture.asset('assets/icons/icon-sad.svg'),
+              const Text('ぐーぽんっ！できませんでした', style: TextStyle(fontSize: 16)),
+              const Text('再度撮影してみてください', style: TextStyle(fontSize: 16)),
+            ],
+          ),
+        )),
       ),
     );
   }

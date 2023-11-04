@@ -36,32 +36,51 @@ class HomePage extends HookConsumerWidget {
       void poleTraveler(Timer timer) {
         Future(() async {
           final travelers = await personalNotifier.getTraveler();
-          if (travelers.isNotEmpty &&
-              context.mounted &&
-              !showConsentDialogFlag.value) {
+          if (travelers.isNotEmpty && context.mounted) {
             showConsentDialogFlag.value = true;
-            // ignore: use_build_context_synchronously
-            showDialog(
-              context: context,
-              builder: (context) {
-                return SimpleDialog(
-                  children: [
-                    const SizedBox(height: 32),
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage('assets/imgs/kani.png'),
+            for (var traveler in travelers) {
+              if (context.mounted) return;
+              // ignore: use_build_context_synchronously
+              var keep = false;
+              await showDialog(
+                context: context,
+                builder: (context) {
+                  return SimpleDialog(
+                    children: [
+                      const SizedBox(height: 32),
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: AssetImage('assets/imgs/kani.png'),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 32),
-                  ],
-                );
-              },
-            );
+                      const SizedBox(width: 32),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: const Color(0xFF7E7E7E),
+                          backgroundColor: Colors.white,
+                          elevation: 0,
+                          side: const BorderSide(
+                            color: Color(0xFF7E7E7E),
+                          ),
+                        ),
+                        child: const Text('オッケー'),
+                        onPressed: () {
+                          keep = true;
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+              if (!keep) {
+                await personalNotifier.removeTraveler(traveler['uuid']);
+              }
+            }
           }
         });
       }

@@ -56,8 +56,7 @@ class PersonalNotifier extends Notifier<PersonalState> {
     final results = await client
         .from('users')
         .select()
-        .not('traveler_uuid', 'is', null)
-        .match({'type': UserType.guide, 'uuid': uuid});
+        .match({'type': UserType.traveller, 'guide_uuid': uuid});
 
     ref.read(personalProvider.notifier).build();
     print(results);
@@ -72,9 +71,9 @@ class PersonalNotifier extends Notifier<PersonalState> {
     final uuid = pref.get('uuid');
 
     await client.from('users').update({
-      'traveler_uuid': uuid,
+      'guide_uuid': guideUuid,
     }).match({
-      'uuid': guideUuid,
+      'uuid': uuid,
     });
 
     ref.read(personalProvider.notifier).build();
@@ -102,5 +101,19 @@ class PersonalNotifier extends Notifier<PersonalState> {
 
     print('${state.type}, ${state.uuid}');
     fetch();
+  }
+
+  Future<void> removeTraveler(String traverUuid) async {
+    final client = Supabase.instance.client;
+
+    final pref = await SharedPreferences.getInstance();
+
+    final uuid = pref.get('uuid');
+
+    await client.from('users').update({
+      'guide_uuid': null,
+    }).match({'guide_uuid': uuid, 'uuid': traverUuid});
+
+    ref.read(personalProvider.notifier).build();
   }
 }

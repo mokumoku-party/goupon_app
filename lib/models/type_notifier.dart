@@ -1,10 +1,5 @@
+import 'package:app/data/user_type.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-enum UserType {
-  guide,
-  traveller,
-  none,
-}
 
 final typeProvider = NotifierProvider<TypeNotifer, UserType>(TypeNotifer.new);
 

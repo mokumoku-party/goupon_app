@@ -22,7 +22,7 @@ class MapPage extends HookConsumerWidget {
     final statePosition = useState<Position?>(null);
     final guidePosition =
         useState<LatLng>(const LatLng(35.5583744, 139.7555427));
-    final distance = useState<double>(10000000000000000000);
+    final distance = useState<double>(0);
     final mapController = useState<GoogleMapController?>(null);
     final cameraSetFlag = useState<bool>(false);
 
@@ -43,6 +43,7 @@ class MapPage extends HookConsumerWidget {
             Geolocator.getPositionStream(locationSettings: locationSettings)
                 .listen((Position? position) {
           if (position == null) return;
+          if (!context.mounted) return;
           statePosition.value = position;
 
           if (mapController.value != null && !cameraSetFlag.value) {

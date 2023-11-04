@@ -22,6 +22,16 @@ class MapPage extends HookConsumerWidget {
           target: _center,
           zoom: 11.0,
         ),
+        markers: {
+          const Marker(
+            markerId: const MarkerId("Sydney"),
+            position: LatLng(-33.86, 151.20),
+            infoWindow: InfoWindow(
+              title: "Sydney",
+              snippet: "Capital of New South Wales",
+            ), // InfoWindow
+          ),
+        },
       ),
     );
   }

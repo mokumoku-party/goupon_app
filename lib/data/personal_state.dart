@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:app/data/user_type.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -11,6 +13,8 @@ class PersonalState with _$PersonalState {
     @Default('') String uuid,
     @Default(0.0) double latitude,
     @Default(0.0) double longitude,
+    String? nickname,
+    String? description,
   }) = _PersonalState;
 
   PersonalState._();

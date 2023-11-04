@@ -19,13 +19,18 @@ class PersonalNotifier extends Notifier<PersonalState> {
     final pref = await SharedPreferences.getInstance();
     final localUuid = pref.getString('uuid');
 
+    if (localUuid == null) {
+      state = state.copyWith(isLoading: false);
+      return;
+    }
+
     final uuid = (state.uuid.isEmpty) ? localUuid : state.uuid;
     final result = (await client.from('users').select().match({"uuid": uuid}));
 
     final user = List<Map<String, dynamic>>.from(result).first;
 
     state = state.copyWith(
-      uuid: uuid!,
+      uuid: uuid,
       name: user['name'],
       type: UserType.values.byName(user['type']),
       isLoading: false,
@@ -61,6 +66,20 @@ class PersonalNotifier extends Notifier<PersonalState> {
     ref.read(personalProvider.notifier).build();
     print(results);
     return List<Map<String, dynamic>>.from(results);
+  }
+
+  Future<void> removeTraveler(String traverUuid) async {
+    final client = Supabase.instance.client;
+
+    final pref = await SharedPreferences.getInstance();
+
+    final uuid = pref.get('uuid');
+
+    await client.from('users').update({
+      'guide_uuid': null,
+    }).match({'guide_uuid': uuid, 'uuid': traverUuid});
+
+    ref.read(personalProvider.notifier).build();
   }
 
   Future<void> setGuide(String guideUuid) async {
@@ -101,19 +120,5 @@ class PersonalNotifier extends Notifier<PersonalState> {
 
     print('${state.type}, ${state.uuid}');
     fetch();
-  }
-
-  Future<void> removeTraveler(String traverUuid) async {
-    final client = Supabase.instance.client;
-
-    final pref = await SharedPreferences.getInstance();
-
-    final uuid = pref.get('uuid');
-
-    await client.from('users').update({
-      'guide_uuid': null,
-    }).match({'guide_uuid': uuid, 'uuid': traverUuid});
-
-    ref.read(personalProvider.notifier).build();
   }
 }

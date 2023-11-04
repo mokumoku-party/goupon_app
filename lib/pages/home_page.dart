@@ -1,17 +1,66 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:async';
+
 import 'package:app/app.dart';
 import 'package:app/models/personal_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
 
+  final LocationSettings locationSettings = const LocationSettings(
+    accuracy: LocationAccuracy.high, //正確性:highはAndroid(0-100m),iOS(10m)
+    distanceFilter: 1,
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final statePosition = useState<Position?>(null);
+    // final guidePosition =
+    //     useState<LatLng>(const LatLng(35.5583744, 139.7555427));
+    // final distance = useState<double>(0);
+    // final cameraSetFlag = useState<bool>(false);
+    final personalNotifier = ref.watch(personalProvider.notifier);
+
+    useEffect(() {
+      StreamSubscription<Position>? positionStream;
+      Future(() async {
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          await Geolocator.requestPermission();
+        }
+
+        //現在位置を更新し続ける
+        positionStream =
+            Geolocator.getPositionStream(locationSettings: locationSettings)
+                .listen((Position? position) {
+          if (position == null) return;
+          if (!context.mounted) return;
+          statePosition.value = position;
+          personalNotifier.setLocation(position.latitude, position.longitude);
+
+          // distance.value = Geolocator.distanceBetween(
+          //   position.latitude,
+          //   position.longitude,
+          //   guidePosition.value.latitude,
+          //   guidePosition.value.longitude,
+          // );
+
+          print(position == null
+              ? 'Unknown'
+              : '${position.latitude.toString()}, ${position.longitude.toString()}');
+        });
+      });
+      return positionStream?.cancel;
+    }, const []);
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(

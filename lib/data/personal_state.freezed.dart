@@ -19,6 +19,8 @@ mixin _$PersonalState {
   UserType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get uuid => throw _privateConstructorUsedError;
+  double get latitude => throw _privateConstructorUsedError;
+  double get longitude => throw _privateConstructorUsedError;
   String? get nickname => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
 
@@ -37,6 +39,8 @@ abstract class $PersonalStateCopyWith<$Res> {
       {UserType type,
       String name,
       String uuid,
+      double latitude,
+      double longitude,
       String? nickname,
       String? description});
 }
@@ -57,6 +61,8 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
     Object? type = null,
     Object? name = null,
     Object? uuid = null,
+    Object? latitude = null,
+    Object? longitude = null,
     Object? nickname = freezed,
     Object? description = freezed,
   }) {
@@ -73,6 +79,14 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
               as String,
+      latitude: null == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      longitude: null == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double,
       nickname: freezed == nickname
           ? _value.nickname
           : nickname // ignore: cast_nullable_to_non_nullable
@@ -97,6 +111,8 @@ abstract class _$$PersonalStateImplCopyWith<$Res>
       {UserType type,
       String name,
       String uuid,
+      double latitude,
+      double longitude,
       String? nickname,
       String? description});
 }
@@ -115,6 +131,8 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
     Object? type = null,
     Object? name = null,
     Object? uuid = null,
+    Object? latitude = null,
+    Object? longitude = null,
     Object? nickname = freezed,
     Object? description = freezed,
   }) {
@@ -131,6 +149,14 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
           ? _value.uuid
           : uuid // ignore: cast_nullable_to_non_nullable
               as String,
+      latitude: null == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      longitude: null == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as double,
       nickname: freezed == nickname
           ? _value.nickname
           : nickname // ignore: cast_nullable_to_non_nullable
@@ -150,6 +176,8 @@ class _$PersonalStateImpl extends _PersonalState {
       {this.type = UserType.none,
       this.name = '',
       this.uuid = '',
+      this.latitude = 0.0,
+      this.longitude = 0.0,
       this.nickname,
       this.description})
       : super._();
@@ -164,13 +192,19 @@ class _$PersonalStateImpl extends _PersonalState {
   @JsonKey()
   final String uuid;
   @override
+  @JsonKey()
+  final double latitude;
+  @override
+  @JsonKey()
+  final double longitude;
+  @override
   final String? nickname;
   @override
   final String? description;
 
   @override
   String toString() {
-    return 'PersonalState(type: $type, name: $name, uuid: $uuid, nickname: $nickname, description: $description)';
+    return 'PersonalState(type: $type, name: $name, uuid: $uuid, latitude: $latitude, longitude: $longitude, nickname: $nickname, description: $description)';
   }
 
   @override
@@ -181,6 +215,10 @@ class _$PersonalStateImpl extends _PersonalState {
             (identical(other.type, type) || other.type == type) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.uuid, uuid) || other.uuid == uuid) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname) &&
             (identical(other.description, description) ||
@@ -188,8 +226,8 @@ class _$PersonalStateImpl extends _PersonalState {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, type, name, uuid, nickname, description);
+  int get hashCode => Object.hash(runtimeType, type, name, uuid, latitude,
+      longitude, nickname, description);
 
   @JsonKey(ignore: true)
   @override
@@ -203,6 +241,8 @@ abstract class _PersonalState extends PersonalState {
       {final UserType type,
       final String name,
       final String uuid,
+      final double latitude,
+      final double longitude,
       final String? nickname,
       final String? description}) = _$PersonalStateImpl;
   _PersonalState._() : super._();
@@ -213,6 +253,10 @@ abstract class _PersonalState extends PersonalState {
   String get name;
   @override
   String get uuid;
+  @override
+  double get latitude;
+  @override
+  double get longitude;
   @override
   String? get nickname;
   @override

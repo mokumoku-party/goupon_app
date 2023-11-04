@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/data/personal_state.dart';
 import 'package:app/routes/app_router.dart';
 import 'package:app/widget_marker.dart';
 import 'package:app/widget_marker_google_map.dart';
@@ -14,14 +15,15 @@ class MapPage extends HookConsumerWidget {
     accuracy: LocationAccuracy.high, //正確性:highはAndroid(0-100m),iOS(10m)
     distanceFilter: 1,
   );
+  final PersonalState personalState;
 
-  const MapPage({super.key});
+  const MapPage({super.key, required this.personalState});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statePosition = useState<Position?>(null);
-    final guidePosition =
-        useState<LatLng>(const LatLng(35.5583744, 139.7555427));
+    final guidePosition = useState<LatLng>(
+        LatLng(personalState.latitude, personalState.longitude));
     final distance = useState<double>(0);
     final mapController = useState<GoogleMapController?>(null);
     final cameraSetFlag = useState<bool>(false);

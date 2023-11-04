@@ -1,12 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:app/app.dart';
+import 'package:app/models/personal_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-final isGuideProvider = StateProvider((ref) => false);
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -351,11 +350,12 @@ class _ToggleButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isGuide = ref.watch(isGuideProvider);
+    final isGuide =
+        ref.watch(personalProvider.select((value) => value.type.isGuide));
 
     return GestureDetector(
       onTap: () {
-        ref.read(isGuideProvider.notifier).update((state) => !state);
+        ref.read(personalProvider.notifier).toggle();
       },
       child: Container(
         width: 88,

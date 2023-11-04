@@ -62,7 +62,6 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-    namespace 'com.example.flutter_template'
 }
 
 flutter {

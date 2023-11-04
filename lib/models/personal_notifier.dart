@@ -95,9 +95,8 @@ class PersonalNotifier extends Notifier<PersonalState> {
     final results = await client
         .from('users')
         .select()
-        .not('latitude', 'is', null)
         .not('traveler_uuid', 'is', null)
-        .match({'type': UserType.traveller, 'uuid': uuid});
+        .match({'type': UserType.guide, 'uuid': uuid});
 
     ref.read(personalProvider.notifier).build();
     print(results);

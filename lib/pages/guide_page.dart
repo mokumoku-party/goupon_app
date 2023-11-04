@@ -43,7 +43,67 @@ class GuidePage extends HookConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: _ProfileCard(
                     onTap: () {
-                      ref.read(appRouterProvider).go('/map');
+                      //
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SimpleDialog(
+                            children: [
+                              const SizedBox(height: 32),
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/imgs/kani.png'),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              const Center(child: Text('【ユーザー名】さんに依頼しますか？')),
+                              const SizedBox(height: 24),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(width: 37),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: const Color(0xFF7E7E7E),
+                                      backgroundColor: Colors.white,
+                                      elevation: 0,
+                                      side: const BorderSide(
+                                        color: Color(0xFF7E7E7E),
+                                      ),
+                                    ),
+                                    child: const Text('まだ検討中'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  const SizedBox(width: 24),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF7E7E7E),
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      side: const BorderSide(
+                                        color: Color(0xFF7E7E7E),
+                                      ),
+                                    ),
+                                    child: const Text('依頼する'),
+                                    onPressed: () {
+                                      ref.read(appRouterProvider).go('/map');
+                                    },
+                                  ),
+                                  const SizedBox(width: 37),
+                                ],
+                              ),
+                              const SizedBox(width: 32),
+                            ],
+                          );
+                        },
+                      );
                     },
                     medals: const ["a", "a", "a", "a", "a", "a"],
                   ),

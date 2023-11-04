@@ -1,3 +1,4 @@
+import 'package:app/data/personal_state.dart';
 import 'package:app/models/personal_notifier.dart';
 import 'package:app/pages/contact_page.dart';
 import 'package:app/pages/goupon_page.dart';
@@ -50,7 +51,9 @@ final appRouterProvider = Provider((ref) {
                   routes: [
                     GoRoute(
                       path: 'map',
-                      builder: (context, state) => const MapPage(),
+                      builder: (context, state) => MapPage(
+                        personalState: state.extra! as PersonalState,
+                      ),
                     ),
                   ],
                 ),

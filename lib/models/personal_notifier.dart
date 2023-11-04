@@ -39,4 +39,33 @@ class PersonalNotifier extends Notifier<PersonalState> {
     print('${state.type}, ${state.uuid}');
     fetch();
   }
+
+  Future<void> setLocation(double latitude, double longitude) async {
+    final client = Supabase.instance.client;
+
+    final pref = await SharedPreferences.getInstance();
+
+    final uuid = pref.get('uuid');
+
+    await client.from('users').update({
+      'latitude': latitude,
+      'longitude': longitude,
+    }).match({'uuid': uuid});
+
+    ref.read(personalProvider.notifier).build();
+  }
+
+  Future<List<Map<String, dynamic>>> getGuides() async {
+    final client = Supabase.instance.client;
+
+    final results = await client
+        .from('users')
+        .select()
+        .not('latitude', 'is', null)
+        .match({'type': UserType.guide});
+
+    ref.read(personalProvider.notifier).build();
+    print(results);
+    return List<Map<String, dynamic>>.from(results);
+  }
 }

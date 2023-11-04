@@ -9,6 +9,8 @@ class PersonalState with _$PersonalState {
     @Default(UserType.none) UserType type,
     @Default('') String name,
     @Default('') String uuid,
+    @Default(0.0) double latitude,
+    @Default(0.0) double longitude,
   }) = _PersonalState;
 
   PersonalState._();

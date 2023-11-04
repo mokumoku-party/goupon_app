@@ -12,7 +12,7 @@ class PersonalNotifier extends Notifier<PersonalState> {
   @override
   PersonalState build() {
     fetch();
-    return PersonalState();
+    return PersonalState(isLoading: true);
   }
 
   Future<void> fetch() async {
@@ -28,31 +28,8 @@ class PersonalNotifier extends Notifier<PersonalState> {
       uuid: uuid!,
       name: user['name'],
       type: UserType.values.byName(user['type']),
+      isLoading: false,
     );
-  }
-
-  void toggle() async {
-    await client.from('users').update({'type': state.type.toggle().name}).match(
-      {'uuid': state.uuid},
-    );
-
-    print('${state.type}, ${state.uuid}');
-    fetch();
-  }
-
-  Future<void> setLocation(double latitude, double longitude) async {
-    final client = Supabase.instance.client;
-
-    final pref = await SharedPreferences.getInstance();
-
-    final uuid = pref.get('uuid');
-
-    await client.from('users').update({
-      'latitude': latitude,
-      'longitude': longitude,
-    }).match({'uuid': uuid});
-
-    ref.read(personalProvider.notifier).build();
   }
 
   Future<List<Map<String, dynamic>>> getGuides() async {
@@ -63,6 +40,24 @@ class PersonalNotifier extends Notifier<PersonalState> {
         .select()
         .not('latitude', 'is', null)
         .match({'type': UserType.guide});
+
+    ref.read(personalProvider.notifier).build();
+    print(results);
+    return List<Map<String, dynamic>>.from(results);
+  }
+
+  Future<List<Map<String, dynamic>>> getTraveler() async {
+    final client = Supabase.instance.client;
+
+    final pref = await SharedPreferences.getInstance();
+
+    final uuid = pref.get('uuid');
+
+    final results = await client
+        .from('users')
+        .select()
+        .not('traveler_uuid', 'is', null)
+        .match({'type': UserType.guide, 'uuid': uuid});
 
     ref.read(personalProvider.notifier).build();
     print(results);
@@ -85,21 +80,27 @@ class PersonalNotifier extends Notifier<PersonalState> {
     ref.read(personalProvider.notifier).build();
   }
 
-  Future<List<Map<String, dynamic>>> getTraveler() async {
+  Future<void> setLocation(double latitude, double longitude) async {
     final client = Supabase.instance.client;
 
     final pref = await SharedPreferences.getInstance();
 
     final uuid = pref.get('uuid');
 
-    final results = await client
-        .from('users')
-        .select()
-        .not('traveler_uuid', 'is', null)
-        .match({'type': UserType.guide, 'uuid': uuid});
+    await client.from('users').update({
+      'latitude': latitude,
+      'longitude': longitude,
+    }).match({'uuid': uuid});
 
     ref.read(personalProvider.notifier).build();
-    print(results);
-    return List<Map<String, dynamic>>.from(results);
+  }
+
+  void toggle() async {
+    await client.from('users').update({'type': state.type.toggle().name}).match(
+      {'uuid': state.uuid},
+    );
+
+    print('${state.type}, ${state.uuid}');
+    fetch();
   }
 }

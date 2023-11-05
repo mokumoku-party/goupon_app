@@ -141,6 +141,7 @@ class HomePage extends HookConsumerWidget {
             const snackBar = SnackBar(content: Text("ユーザー情報を削除しました"));
             // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            ref.read(appRouterProvider).go('/register_type');
           },
           child: const Text(
             'ぐーぽんっ！',

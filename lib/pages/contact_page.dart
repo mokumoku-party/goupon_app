@@ -12,7 +12,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
 
 /// カメラコントローラ用のプロバイダー
 final cameraControllerProvider =
@@ -73,28 +72,31 @@ class ContactPage extends HookConsumerWidget {
           data: (data) => Flex(
             direction: kIsWeb ? Axis.vertical : Axis.horizontal,
             children: [
-              Stack(
-                children: [
-                  CameraPreview(data),
-                  const Positioned.fill(
-                    child: Center(
-                      child: _LoadingIndicator(),
+              Expanded(
+                child: Stack(
+                  children: [
+                    CameraPreview(data),
+                    const Positioned.fill(
+                      child: Center(
+                        child: _LoadingIndicator(),
+                      ),
                     ),
-                  ),
-                  const Positioned.fill(
-                    child: Center(
-                      child: _SuccessDialog(),
+                    const Positioned.fill(
+                      child: Center(
+                        child: _SuccessDialog(),
+                      ),
                     ),
-                  ),
-                  const Positioned.fill(
-                    child: Center(
-                      child: _RetryDialog(),
+                    const Positioned.fill(
+                      child: Center(
+                        child: _RetryDialog(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Flexible(
-                child: Center(
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                     style: TextButton.styleFrom(
                       backgroundColor: primaryColor,

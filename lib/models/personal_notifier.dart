@@ -80,6 +80,10 @@ class PersonalNotifier extends Notifier<PersonalState> {
       'guide_uuid': null,
     }).match({'guide_uuid': uuid, 'uuid': traverUuid});
 
+    await client.from('users').update({
+      'traveler_uuid': null,
+    }).match({'traveler_uuid': traverUuid, 'uuid': uuid});
+
     ref.read(personalProvider.notifier).build();
   }
 

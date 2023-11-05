@@ -124,8 +124,6 @@ final appRouterProvider = Provider((ref) {
           SystemChrome.setPreferredOrientations([
             DeviceOrientation.portraitUp,
             DeviceOrientation.portraitDown,
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight,
           ]);
         }
 

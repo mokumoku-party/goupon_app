@@ -184,33 +184,43 @@ class _ResultSeel extends HookConsumerWidget {
     return Container(
       child: Column(
         children: [
-          const Text('🎉 シールゲット！ 🎉'),
-          Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-            child: Row(
-              children: [
-                Container(
-                  width: 84,
-                  height: 84,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(url),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              '🎉 シールゲット！ 🎉',
+              style: TextStyle(fontSize: 24),
+            ),
+          ),
+          Center(
+            child: Container(
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 84,
+                    height: 84,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(url),
+                      ),
                     ),
                   ),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(color: textColor, fontSize: 16),
-                    ),
-                    Text(
-                      desc,
-                      style: const TextStyle(color: textColor, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
+                  Column(
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(color: textColor, fontSize: 16),
+                      ),
+                      Text(
+                        desc,
+                        style: const TextStyle(color: textColor, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           ElevatedButton(

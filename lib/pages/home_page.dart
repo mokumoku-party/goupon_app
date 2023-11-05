@@ -61,6 +61,7 @@ class HomePage extends HookConsumerWidget {
                           ),
                         ),
                       ),
+                      Text('【"${traveler['name']}"】さんから案内の依頼が届きました！'),
                       const SizedBox(width: 32),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -71,7 +72,7 @@ class HomePage extends HookConsumerWidget {
                             color: Color(0xFF7E7E7E),
                           ),
                         ),
-                        child: const Text('オッケー'),
+                        child: const Text('案内する'),
                         onPressed: () {
                           keep = true;
                           personalNotifier.setTraveler(traveler['uuid']);

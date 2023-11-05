@@ -4,6 +4,7 @@ import 'package:app/pages/contact_page.dart';
 import 'package:app/pages/goupon_page.dart';
 import 'package:app/pages/guide/guide_home_page.dart';
 import 'package:app/pages/guide_page.dart';
+import 'package:app/pages/guide_title_list_page.dart';
 import 'package:app/pages/home_page.dart';
 import 'package:app/pages/loading_page.dart';
 import 'package:app/pages/map_page.dart';
@@ -85,7 +86,7 @@ final appRouterProvider = Provider((ref) {
                 GoRoute(
                   path: '/logs',
                   builder: (context, state) {
-                    return const HomePage();
+                    return const GuideTitleListPage();
                   },
                 ),
               ],

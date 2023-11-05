@@ -1,5 +1,6 @@
 import 'package:app/routes/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 const backgroundColor = Color(0xfff1f1f1);
@@ -23,6 +24,14 @@ class App extends HookConsumerWidget {
       ),
       themeMode: ThemeMode.light,
       routerConfig: appRouter,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("ja", "JP"),
+      ],
     );
   }
 }

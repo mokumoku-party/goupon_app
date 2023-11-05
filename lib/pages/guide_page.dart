@@ -191,6 +191,12 @@ class GuidePage extends HookConsumerWidget {
                                                 name: guides.value?[index]
                                                         ['name'] ??
                                                     'test_name_aaa',
+                                                uuid: guides.value?[index]
+                                                        ['uuid'] ??
+                                                    '',
+                                                imageUrl: guides.value?[index]
+                                                        ['profile_img_url'] ??
+                                                    '',
                                                 longitude: guides.value?[index]
                                                         ['longitude'] ??
                                                     0.0,

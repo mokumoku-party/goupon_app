@@ -254,24 +254,24 @@ class _RetryDialog extends HookConsumerWidget {
     return AnimatedOpacity(
       opacity: retry ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 100),
-      child: Container(
-        width: 287,
-        height: 142,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: Center(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-          child: Column(
-            children: [
-              SvgPicture.asset('assets/icons/icon-sad.svg'),
-              const Text('ぐーぽんっ！できませんでした', style: TextStyle(fontSize: 16)),
-              const Text('再度撮影してみてください', style: TextStyle(fontSize: 16)),
-            ],
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
           ),
-        )),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset('assets/icons/icon-sad.svg'),
+                const Text('ぐーぽんっ！できませんでした', style: TextStyle(fontSize: 16)),
+                const Text('再度撮影してみてください', style: TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -297,25 +297,25 @@ class _SuccessDialog extends HookConsumerWidget {
     return AnimatedOpacity(
       opacity: success ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 100),
-      child: Container(
-        width: 287,
-        height: 142,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-        ),
-        child: const Center(
-            child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-          child: Column(
-            children: [
-              Text(
-                'ぐーぽんっ！',
-                style: TextStyle(fontSize: 40),
-              )
-            ],
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
           ),
-        )),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'ぐーぽんっ！',
+                  style: TextStyle(fontSize: 40),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

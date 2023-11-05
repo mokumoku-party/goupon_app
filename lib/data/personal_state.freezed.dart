@@ -21,6 +21,7 @@ mixin _$PersonalState {
   String get uuid => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
+  String get imageUrl => throw _privateConstructorUsedError;
   String? get nickname => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   List<int> get stickers => throw _privateConstructorUsedError;
@@ -43,6 +44,7 @@ abstract class $PersonalStateCopyWith<$Res> {
       String uuid,
       double latitude,
       double longitude,
+      String imageUrl,
       String? nickname,
       String? description,
       List<int> stickers,
@@ -67,6 +69,7 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
     Object? uuid = null,
     Object? latitude = null,
     Object? longitude = null,
+    Object? imageUrl = null,
     Object? nickname = freezed,
     Object? description = freezed,
     Object? stickers = null,
@@ -93,6 +96,10 @@ class _$PersonalStateCopyWithImpl<$Res, $Val extends PersonalState>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
       nickname: freezed == nickname
           ? _value.nickname
           : nickname // ignore: cast_nullable_to_non_nullable
@@ -127,6 +134,7 @@ abstract class _$$PersonalStateImplCopyWith<$Res>
       String uuid,
       double latitude,
       double longitude,
+      String imageUrl,
       String? nickname,
       String? description,
       List<int> stickers,
@@ -149,6 +157,7 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
     Object? uuid = null,
     Object? latitude = null,
     Object? longitude = null,
+    Object? imageUrl = null,
     Object? nickname = freezed,
     Object? description = freezed,
     Object? stickers = null,
@@ -175,6 +184,10 @@ class __$$PersonalStateImplCopyWithImpl<$Res>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double,
+      imageUrl: null == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String,
       nickname: freezed == nickname
           ? _value.nickname
           : nickname // ignore: cast_nullable_to_non_nullable
@@ -204,6 +217,7 @@ class _$PersonalStateImpl extends _PersonalState {
       this.uuid = '',
       this.latitude = 0.0,
       this.longitude = 0.0,
+      this.imageUrl = '',
       this.nickname,
       this.description,
       final List<int> stickers = const [],
@@ -227,6 +241,9 @@ class _$PersonalStateImpl extends _PersonalState {
   @JsonKey()
   final double longitude;
   @override
+  @JsonKey()
+  final String imageUrl;
+  @override
   final String? nickname;
   @override
   final String? description;
@@ -245,7 +262,7 @@ class _$PersonalStateImpl extends _PersonalState {
 
   @override
   String toString() {
-    return 'PersonalState(type: $type, name: $name, uuid: $uuid, latitude: $latitude, longitude: $longitude, nickname: $nickname, description: $description, stickers: $stickers, isLoading: $isLoading)';
+    return 'PersonalState(type: $type, name: $name, uuid: $uuid, latitude: $latitude, longitude: $longitude, imageUrl: $imageUrl, nickname: $nickname, description: $description, stickers: $stickers, isLoading: $isLoading)';
   }
 
   @override
@@ -260,6 +277,8 @@ class _$PersonalStateImpl extends _PersonalState {
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl) &&
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname) &&
             (identical(other.description, description) ||
@@ -277,6 +296,7 @@ class _$PersonalStateImpl extends _PersonalState {
       uuid,
       latitude,
       longitude,
+      imageUrl,
       nickname,
       description,
       const DeepCollectionEquality().hash(_stickers),
@@ -296,6 +316,7 @@ abstract class _PersonalState extends PersonalState {
       final String uuid,
       final double latitude,
       final double longitude,
+      final String imageUrl,
       final String? nickname,
       final String? description,
       final List<int> stickers,
@@ -312,6 +333,8 @@ abstract class _PersonalState extends PersonalState {
   double get latitude;
   @override
   double get longitude;
+  @override
+  String get imageUrl;
   @override
   String? get nickname;
   @override

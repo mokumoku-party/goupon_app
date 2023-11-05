@@ -349,7 +349,9 @@ class _ProfileCard extends HookConsumerWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage('assets/imgs/kani.png'),
+                image: ((user.imageUrl == '')
+                    ? const AssetImage('assets/imgs/kani.png')
+                    : NetworkImage(user.imageUrl)) as ImageProvider,
               ),
             ),
           ),

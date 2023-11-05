@@ -13,6 +13,7 @@ class PersonalState with _$PersonalState {
     @Default('') String uuid,
     @Default(0.0) double latitude,
     @Default(0.0) double longitude,
+    @Default('') String imageUrl,
     String? nickname,
     String? description,
     @Default([]) List<int> stickers,

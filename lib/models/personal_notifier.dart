@@ -32,6 +32,7 @@ class PersonalNotifier extends Notifier<PersonalState> {
     state = state.copyWith(
       uuid: uuid,
       name: user['name'],
+      imageUrl: user['profile_img_url'],
       type: UserType.values.byName(user['type']),
       isLoading: false,
     );

@@ -82,10 +82,8 @@ class HomePage extends HookConsumerWidget {
                   );
                 },
               );
-              if (!keep) {
-                await personalNotifier.removeTraveler(traveler['uuid']);
-                recievedUUID.value.remove(traveler['uuid']);
-              }
+              await personalNotifier.removeTraveler(traveler['uuid']);
+              recievedUUID.value.remove(traveler['uuid']);
             }
           }
         });

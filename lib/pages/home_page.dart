@@ -26,6 +26,7 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final statePosition = useState<Position?>(null);
     final showConsentDialogFlag = useState<bool>(false);
+    final recievedUUID = useState<Set>({});
     // final guidePosition =
     //     useState<LatLng>(const LatLng(35.5583744, 139.7555427));
     // final distance = useState<double>(0);
@@ -39,9 +40,11 @@ class HomePage extends HookConsumerWidget {
           if (travelers.isNotEmpty && context.mounted) {
             showConsentDialogFlag.value = true;
             for (var traveler in travelers) {
-              if (context.mounted) return;
+              if (!context.mounted) return;
+              if (recievedUUID.value.contains(traveler['uuid'])) return;
               // ignore: use_build_context_synchronously
               var keep = false;
+              recievedUUID.value.add(traveler['uuid']);
               await showDialog(
                 context: context,
                 builder: (context) {
@@ -71,6 +74,7 @@ class HomePage extends HookConsumerWidget {
                         child: const Text('オッケー'),
                         onPressed: () {
                           keep = true;
+                          personalNotifier.setTraveler(traveler['uuid']);
                         },
                       ),
                     ],
@@ -79,6 +83,7 @@ class HomePage extends HookConsumerWidget {
               );
               if (!keep) {
                 await personalNotifier.removeTraveler(traveler['uuid']);
+                recievedUUID.value.remove(traveler['uuid']);
               }
             }
           }

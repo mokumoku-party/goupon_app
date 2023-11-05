@@ -11,12 +11,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class GuidePage extends HookConsumerWidget {
-  const GuidePage({super.key});
-
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high, //正確性:highはAndroid(0-100m),iOS(10m)
     distanceFilter: 1,
   );
+
+  const GuidePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,9 +56,9 @@ class GuidePage extends HookConsumerWidget {
         );
       }
 
-      int mySortComparison(double a_la, double a_lo, double b_la, double b_lo) {
-        final propertyA = distance(a_la, a_lo);
-        final propertyB = distance(b_la, b_lo);
+      int mySortComparison(double aLa, double aLo, double bLa, double bLo) {
+        final propertyA = distance(aLa, aLo);
+        final propertyB = distance(bLa, bLo);
         if (propertyA < propertyB) {
           return -1;
         } else if (propertyA > propertyB) {
@@ -75,6 +75,7 @@ class GuidePage extends HookConsumerWidget {
         guides.value = pguides;
         print(guides.value);
       });
+      return null;
     }, const []);
 
     return Scaffold(
@@ -112,21 +113,23 @@ class GuidePage extends HookConsumerWidget {
                     guides.value?[index]['name'] ?? 'aaa',
                     guides.value?[index]['nickname'] ?? 'bbb',
                     guides.value?[index]['description'] ?? 'ccc',
+                    guides.value?[index]['profile_img_url'],
                     onTap: () {
-                      //
                       showDialog(
                         context: context,
                         builder: (context) {
+                          final url = guides.value?[index]['profile_img_url'];
+
                           return SimpleDialog(
                             children: [
                               const SizedBox(height: 32),
                               Container(
                                 width: 56,
                                 height: 56,
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
-                                    image: AssetImage('assets/imgs/kani.png'),
+                                    image: NetworkImage(url),
                                   ),
                                 ),
                               ),
@@ -238,9 +241,10 @@ class _ProfileCard extends HookConsumerWidget {
   final String userName;
   final String nickName;
   final String description;
+  final String? url;
   final VoidCallback? onTap;
 
-  const _ProfileCard(this.userName, this.nickName, this.description,
+  const _ProfileCard(this.userName, this.nickName, this.description, this.url,
       {required this.medals, this.onTap});
 
   @override
@@ -258,10 +262,12 @@ class _ProfileCard extends HookConsumerWidget {
             Container(
               width: 84,
               height: 84,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  image: AssetImage('assets/imgs/kani.png'),
+                  image: ((url == null || url!.isEmpty)
+                      ? const AssetImage('assets/imgs/kani.png')
+                      : NetworkImage(url!)) as ImageProvider,
                 ),
               ),
             ),

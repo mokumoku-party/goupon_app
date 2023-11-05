@@ -10649,8 +10649,9 @@ this.b=b},
 aPh:function aPh(a){this.a=a},
 aaj:function aaj(a){this.a=a},
 aSO:function aSO(a){this.a=a},
-xA:function xA(a,b){this.c=a
-this.a=b},
+xA:function xA(a,b,c){this.c=a
+this.d=b
+this.a=c},
 aXy:function aXy(){},
 aXi:function aXi(){},
 aXj:function aXj(){},
@@ -61208,8 +61209,10 @@ A.aSO.prototype={
 $0(){J.v6(this.a.cd(0,$.p_(),t.aq),"/guide_home")},
 $S:0}
 A.xA.prototype={
-N(a){var s=this.c
-return A.mE(null,B.am,s,new A.FW(B.OR,this.gauy(),s.f,B.F4,B.am,B.wW,B.lE,null),null)},
+N(a){var s,r=null,q=this.c
+if(this.d)s=r
+else s=new A.FW(B.OR,this.gauy(),q.f,B.F4,B.am,B.wW,B.lE,r)
+return A.mE(r,B.am,q,s,r)},
 auz(a){var s,r,q=this.c,p=q.c.a.y.gR()
 if(p!=null){q=p.e.i(0,p.a.c.a.x[a])
 s=q==null?null:q.z
@@ -61235,7 +61238,7 @@ A.aXk.prototype={
 $2(a,b){return B.QI},
 $S:302}
 A.aXm.prototype={
-$3(a,b,c){return new A.xA(c,null)},
+$3(a,b,c){return new A.xA(c,B.c.q(b.f,"/guide_home/contact"),null)},
 $S:307}
 A.aXq.prototype={
 $2(a,b){return B.q_},

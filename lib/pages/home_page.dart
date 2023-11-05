@@ -133,12 +133,12 @@ class HomePage extends HookConsumerWidget {
           onTap: () async {
             ref.read(appRouterProvider).go('/guide_home/contact');
             return;
+          },
+          onDoubleTap: () async {
             final pref = await SharedPreferences.getInstance();
             await pref.clear();
 
-            const snackBar = SnackBar(
-              content: Text("ユーザー情報を削除しました"),
-            );
+            const snackBar = SnackBar(content: Text("ユーザー情報を削除しました"));
             // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           },

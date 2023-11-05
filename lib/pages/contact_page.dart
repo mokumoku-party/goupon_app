@@ -112,8 +112,8 @@ class ContactPage extends HookConsumerWidget {
                       final file = await data.takePicture();
 
                       if (!kIsWeb) {
-                        final directory = await getExternalStorageDirectory();
-                        if (directory == null) return;
+                        // final directory = await getExternalStorageDirectory();
+                        // if (directory == null) return;
                       }
 
                       // 端末に画像保存

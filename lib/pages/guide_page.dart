@@ -24,6 +24,7 @@ class GuidePage extends HookConsumerWidget {
     final guides = useState<List<Map<String, dynamic>>?>(null);
 
     final statePosition = useState<Position?>(null);
+    final textState = useState<String>('依頼する');
 
     useEffect(() {
       StreamSubscription<Position>? positionStream;
@@ -160,27 +161,52 @@ class GuidePage extends HookConsumerWidget {
                                         color: Color(0xFF7E7E7E),
                                       ),
                                     ),
-                                    child: const Text('依頼する'),
+                                    child: Text(textState.value),
                                     onPressed: () {
-                                      Navigator.pop(context);
-                                      ref
-                                          .read(personalProvider.notifier)
-                                          .setGuide(
-                                              guides.value?[index]['uuid']);
-                                      ref.read(appRouterProvider).go(
-                                            '/guide/map',
-                                            extra: PersonalState(
-                                              name: guides.value?[index]
-                                                      ['name'] ??
-                                                  'test_name_aaa',
-                                              longitude: guides.value?[index]
-                                                      ['longitude'] ??
-                                                  0.0,
-                                              latitude: guides.value?[index]
-                                                      ['latitude'] ??
-                                                  0.0,
-                                            ),
-                                          );
+                                      Future<void> check() async {
+                                        if (!context.mounted) return;
+                                        textState.value = '待機中';
+                                        final suc = await ref
+                                            .read(personalProvider.notifier)
+                                            .checkGuide(
+                                                guides.value?[index]['uuid']);
+                                        if (!suc) {
+                                          print('api is false');
+                                          await Future.delayed(
+                                              const Duration(seconds: 3));
+                                          await check();
+                                          return;
+                                        }
+                                        print('api is true');
+                                        if (!context.mounted) return;
+                                        Navigator.pop(context);
+                                        ref.read(appRouterProvider).go(
+                                              '/guide/map',
+                                              extra: PersonalState(
+                                                name: guides.value?[index]
+                                                        ['name'] ??
+                                                    'test_name_aaa',
+                                                longitude: guides.value?[index]
+                                                        ['longitude'] ??
+                                                    0.0,
+                                                latitude: guides.value?[index]
+                                                        ['latitude'] ??
+                                                    0.0,
+                                              ),
+                                            );
+                                        return;
+                                      }
+
+                                      Future(() async {
+                                        await ref
+                                            .read(personalProvider.notifier)
+                                            .setGuide(
+                                                guides.value?[index]['uuid']);
+
+                                        await check();
+                                      });
+
+                                      Future(() async {});
                                     },
                                   ),
                                   const SizedBox(width: 37),

@@ -30,8 +30,11 @@ final appRouterProvider = Provider((ref) {
           builder: (context, state) => const LoadingPage(),
         ),
         StatefulShellRoute.indexedStack(
-          builder: (context, state, navigationShell) =>
-              ScaffoldWithNavbar(navigationShell),
+          builder: (context, state, navigationShell) {
+            final hide = state.fullPath!.contains('/guide_home/contact');
+
+            return ScaffoldWithNavbar(navigationShell, hide);
+          },
           branches: [
             StatefulShellBranch(
               routes: <RouteBase>[

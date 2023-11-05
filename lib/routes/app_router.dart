@@ -12,6 +12,7 @@ import 'package:app/pages/register/register_profile_page.dart';
 import 'package:app/pages/register/register_type_page.dart';
 import 'package:app/pages/result_page.dart';
 import 'package:app/pages/scaffold_with_navbar.dart';
+import 'package:app/pages/sticker_list_page.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -99,7 +100,7 @@ final appRouterProvider = Provider((ref) {
                 GoRoute(
                   path: '/settings',
                   builder: (context, state) {
-                    return const HomePage();
+                    return const StickerListPage();
                   },
                 ),
               ],

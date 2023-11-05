@@ -71,7 +71,7 @@ class MapPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('aaaaaa'),
+        title: const Text('ぐーぽんっ！'),
       ),
       body: Stack(
         children: [

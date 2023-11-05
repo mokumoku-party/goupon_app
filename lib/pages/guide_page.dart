@@ -131,7 +131,9 @@ class GuidePage extends HookConsumerWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Center(child: Text('【ユーザー名】さんに依頼しますか？')),
+                              Center(
+                                  child: Text(
+                                      "【${guides.value?[index]['name'] ?? 'aaa'}】さんに依頼しますか？")),
                               const SizedBox(height: 24),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
